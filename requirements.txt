@@ -1,0 +1,35 @@
+# --- Core fetching / anti-detection ---
+curl_cffi>=0.7.0          # Tier 1: TLS/JA3-JA4 + HTTP2 fingerprint impersonation
+patchright>=1.61.0        # Tier 2: undetected Playwright fork (optional at runtime)
+camoufox[geoip]>=0.4.0    # Tier 3: hardened Firefox (optional at runtime)
+# playwright==1.50.0 previously pinned for Camoufox's older Juggler protocol, but
+# that version needs pyee<13 which conflicts with patchright's pyee>=13 requirement.
+# Bumped to 1.52+ to satisfy both; verify Tier 3 (Camoufox) still works after install.
+playwright>=1.52.0
+pyee>=13,<14
+
+# --- Parsing / extraction ---
+parsel>=1.9.0             # CSS + XPath + regex over HTML
+selectolax>=0.3.21        # fast HTML parsing / text extraction
+
+# --- Data / config / validation ---
+pydantic>=2.7.0
+PyYAML>=6.0
+python-dotenv>=1.0.1
+
+# --- Scheduling / resilience ---
+APScheduler>=3.10.4
+tenacity>=8.3.0
+
+# --- LLM (optional) ---
+anthropic>=0.40.0
+
+# --- CLI / UX ---
+typer>=0.12.0
+rich>=13.7.0
+
+# --- Local web dashboard ---
+flask>=3.0.0
+
+# --- Tests ---
+pytest>=8.2.0

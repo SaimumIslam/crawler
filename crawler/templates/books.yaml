@@ -1,0 +1,26 @@
+name: books
+start_urls:
+- https://books.toscrape.com/catalogue/page-1.html
+allow_domains:
+- books.toscrape.com
+follow:
+  paginate: li.next a
+  max_pages: 3
+extract:
+  item_selector: article.product_pod
+  fields:
+    title:
+      css: h3 a::attr(title)
+    price:
+      css: p.price_color::text
+      regex: '[0-9.]+'
+    availability:
+      css: p.instock.availability::text
+    detail_url:
+      css: h3 a::attr(href)
+fetch:
+  min_tier: http
+  rate_limit_per_sec: 2.0
+schedule:
+  every: 1d
+  at: 03:00

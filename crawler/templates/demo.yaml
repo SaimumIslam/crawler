@@ -1,0 +1,16 @@
+name: demo
+start_urls:
+- https://books.toscrape.com/catalogue/page-1.html
+allow_domains:
+- books.toscrape.com
+follow:
+  paginate: li.next a
+  max_pages: 3
+extract:
+  item_selector: article.product_pod
+  fields:
+    title:
+      css: h3 a::attr(title)
+fetch:
+  min_tier: http
+  rate_limit_per_sec: 2.0

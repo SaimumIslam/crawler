@@ -1,0 +1,1427 @@
+<!DOCTYPE html>
+<html><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Crawler Studio</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23B9F35A'/%3E%3Cg fill='none' stroke='%230B0C0E' stroke-width='2.4' stroke-linecap='round'%3E%3Ccircle cx='16' cy='16' r='4'/%3E%3Cpath d='M16 6v5M16 21v5M6 16h5M21 16h5'/%3E%3C/g%3E%3C/svg%3E">
+<script src="vendor/react.production.min.js"></script>
+<script src="vendor/react-dom.production.min.js"></script>
+<script src="vendor/dc-runtime.js"></script>
+
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>@font-face{font-family:'Geist Mono';font-style:normal;font-weight:400 500;font-display:swap;src:url("vendor/geist-mono-symbols.woff2") format('woff2');unicode-range:U+2000-2001, U+2004-2008, U+200A, U+23B8-23BD, U+2500-259F}
+@font-face{font-family:'Geist Mono';font-style:normal;font-weight:400 500;font-display:swap;src:url("vendor/geist-mono-latin-ext.woff2") format('woff2');unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF}
+@font-face{font-family:'Geist Mono';font-style:normal;font-weight:400 500;font-display:swap;src:url("vendor/geist-mono-latin.woff2") format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD}
+@font-face{font-family:'Geist';font-style:normal;font-weight:400 700;font-display:swap;src:url("vendor/geist-latin-ext.woff2") format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C4,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:'Geist';font-style:normal;font-weight:400 700;font-display:swap;src:url("vendor/geist-latin.woff2") format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}</style>
+<style>
+html,body{margin:0;background:#0B0C0E;color-scheme:dark}
+a{color:#B9F35A;text-decoration:none}a:hover{color:#D4FA96;text-decoration:underline}
+input::placeholder,textarea::placeholder{color:#5F6670}
+@keyframes cs-pulse{0%{box-shadow:0 0 0 0 rgba(185,243,90,.55)}70%{box-shadow:0 0 0 7px rgba(185,243,90,0)}100%{box-shadow:0 0 0 0 rgba(185,243,90,0)}}
+@keyframes cs-spin{to{transform:rotate(360deg)}}
+::-webkit-scrollbar{width:10px;height:10px}::-webkit-scrollbar-thumb{background:#262A31;border-radius:10px;border:2px solid #0B0C0E}
+</style>
+</helmet>
+<div style="height:100vh;display:flex;flex-direction:column;background:#0B0C0E;color:#E8EAED;font-family:'Geist',system-ui,sans-serif;font-size:14px;line-height:1.45;color-scheme:dark">
+
+  <header style="height:56px;flex:none;display:flex;align-items:center;gap:16px;padding:0 20px;border-bottom:1px solid #1D2026;background:#0B0C0E">
+    <div style="display:flex;align-items:center;gap:10px">
+      <div style="width:26px;height:26px;border-radius:7px;background:#B9F35A;display:grid;place-items:center">
+        <svg width="14" height="14" sc-camel-view-box="0 0 16 16" fill="none" stroke="#0B0C0E" stroke-width="2" stroke-linecap="round"><circle cx="8" cy="8" r="2.2"></circle><path d="M8 1.5v3M8 11.5v3M1.5 8h3M11.5 8h3"></path></svg>
+      </div>
+      <span style="font-weight:600;font-size:15px;letter-spacing:-0.01em">Crawler Studio</span>
+    </div>
+    <div style="flex:1"></div>
+    <sc-if value="{{ globalRunning }}" hint-placeholder-val="{{ false }}">
+      <button sc-camel-on-click="{{ goLive }}" title="View live run" style="display:flex;align-items:center;gap:9px;height:32px;padding:0 12px;border:1px solid #2F3A22;border-radius:999px;background:#12160E;color:#E8EAED;font:inherit;font-size:12.5px;cursor:pointer" style-hover="border-color:#B9F35A">
+        <span style="width:12px;height:12px;border-radius:50%;border:2px solid #2F3A22;border-top-color:#B9F35A;animation:cs-spin .8s linear infinite;box-sizing:border-box"></span>
+        <span style="font-variant-numeric:tabular-nums">{{ globalRunText }}</span>
+        <span style="width:56px;height:4px;border-radius:2px;background:#23272E;overflow:hidden"><span style="display:block;height:100%;width:{{ globalRunPct }};background:#B9F35A;transition:width .3s"></span></span>
+        <sc-if value="{{ queueText }}" hint-placeholder-val="{{ false }}"><span style="color:#9AA1AC">{{ queueText }}</span></sc-if>
+      </button>
+    </sc-if>
+    <div style="display:flex;align-items:center;gap:8px;height:32px;padding:0 4px 0 11px;border:1px solid #23272E;border-radius:999px;font-size:12.5px;color:#9AA1AC">
+      <svg width="13" height="13" sc-camel-view-box="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="8" cy="8" r="6.2"></circle><path d="M8 4.6V8l2.3 1.5"></path></svg>
+      <span style="font-variant-numeric:tabular-nums">{{ schedText }}</span>
+      <button sc-camel-on-click="{{ toggleScheduler }}" title="{{ schedToggleTitle }}" aria-label="{{ schedToggleTitle }}" style="width:24px;height:24px;border-radius:50%;border:none;background:#1A1D22;color:#E8EAED;cursor:pointer;display:grid;place-items:center" style-hover="background:#262A31;color:#B9F35A">
+        <sc-if value="{{ schedOn }}" hint-placeholder-val="{{ true }}"><svg width="9" height="9" sc-camel-view-box="0 0 10 10" fill="currentColor"><rect x="1.5" y="1" width="2.4" height="8" rx=".6"></rect><rect x="6.1" y="1" width="2.4" height="8" rx=".6"></rect></svg></sc-if>
+        <sc-if value="{{ schedOff }}" hint-placeholder-val="{{ false }}"><svg width="9" height="9" sc-camel-view-box="0 0 10 10" fill="currentColor"><path d="M2.5 1v8l6.5-4z"></path></svg></sc-if>
+      </button>
+    </div>
+    <button sc-camel-on-click="{{ openHelp }}" style="display:flex;align-items:center;gap:7px;height:32px;padding:0 12px;border-radius:8px;border:1px solid #2A2F37;background:#121418;color:#E8EAED;font:inherit;font-size:13px;font-weight:500;cursor:pointer" style-hover="background:#181B20">
+      <svg width="14" height="14" sc-camel-view-box="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="8" cy="8" r="6.5"></circle><path d="M6.2 6.2a1.9 1.9 0 1 1 2.6 1.8c-.5.2-.8.6-.8 1.1v.4"></path><circle cx="8" cy="11.6" r=".4" fill="currentColor"></circle></svg>
+      Guide
+    </button>
+  </header>
+
+  <div style="flex:1;display:flex;min-height:0">
+    <aside style="width:248px;flex:none;border-right:1px solid #1D2026;display:flex;flex-direction:column;padding:16px 12px;gap:14px;background:#0D0E11">
+      <button sc-camel-on-click="{{ newCrawler }}" style="display:flex;align-items:center;justify-content:center;gap:8px;height:38px;border-radius:9px;border:1px dashed #343A43;background:transparent;color:#E8EAED;font:inherit;font-weight:500;cursor:pointer" style-hover="border-color:#B9F35A;color:#B9F35A">
+        <svg width="14" height="14" sc-camel-view-box="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M8 3v10M3 8h10"></path></svg>
+        New crawler
+      </button>
+      <div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#7A818C;padding:4px 8px 0">Crawlers</div>
+      <div style="display:flex;flex-direction:column;gap:2px">
+        <sc-for list="{{ sideItems }}" as="it" hint-placeholder-count="2">
+          <div sc-camel-on-mouse-enter="{{ it.onEnter }}" sc-camel-on-mouse-leave="{{ it.onLeave }}" style="position:relative;display:flex;align-items:center;border-radius:8px;background:{{ it.bg }}">
+            <button sc-camel-on-click="{{ it.onClick }}" style="flex:1;min-width:0;display:flex;align-items:center;gap:10px;text-align:left;padding:8px 40px 8px 8px;border:none;background:transparent;color:#E8EAED;font:inherit;cursor:pointer">
+              <span style="position:relative;width:30px;height:30px;border-radius:8px;flex:none;background:#181B20;border:1px solid #23272E;display:grid;place-items:center;color:{{ it.iconFg }}">
+                <sc-if value="{{ it.isAi }}" hint-placeholder-val="{{ false }}">
+                  <svg width="15" height="15" sc-camel-view-box="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M8 1.8l1.4 3.8 3.8 1.4-3.8 1.4L8 12.2 6.6 8.4 2.8 7l3.8-1.4z"></path><path d="M12.8 11.2l.5 1.3 1.3.5-1.3.5-.5 1.3-.5-1.3-1.3-.5 1.3-.5z"></path></svg>
+                </sc-if>
+                <sc-if value="{{ it.isCss }}" hint-placeholder-val="{{ true }}">
+                  <svg width="15" height="15" sc-camel-view-box="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 4L2 8l3.5 4M10.5 4L14 8l-3.5 4"></path></svg>
+                </sc-if>
+                <span style="position:absolute;right:-3px;bottom:-3px;width:9px;height:9px;border-radius:50%;background:{{ it.dot }};border:2px solid #0D0E11;animation:{{ it.anim }}"></span>
+              </span>
+              <span style="display:flex;flex-direction:column;min-width:0;flex:1">
+                <span style="font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ it.name }}</span>
+                <sc-if value="{{ it.running }}" hint-placeholder-val="{{ false }}">
+                  <span style="display:block;height:3px;border-radius:2px;background:#23272E;overflow:hidden;margin:4px 0 2px"><span style="display:block;height:100%;width:{{ it.pct }};background:#B9F35A;transition:width .3s"></span></span>
+                </sc-if>
+                <sc-if value="{{ showSideMeta }}" hint-placeholder-val="{{ true }}">
+                  <span style="display:flex;align-items:center;gap:8px;font-size:12px;color:#7A818C;white-space:nowrap;overflow:hidden">
+                    <span style="overflow:hidden;text-overflow:ellipsis">{{ it.sub }}</span>
+                    <sc-if value="{{ it.scheduled }}" hint-placeholder-val="{{ false }}">
+                      <span title="{{ it.schedTitle }}" style="display:flex;align-items:center;gap:3px;flex:none">
+                        <svg width="11" height="11" sc-camel-view-box="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="8" cy="8" r="6"></circle><path d="M8 4.8V8l2.2 1.4"></path></svg>{{ it.schedShort }}
+                      </span>
+                    </sc-if>
+                  </span>
+                </sc-if>
+              </span>
+            </button>
+            <button sc-camel-on-click="{{ it.onDelete }}" title="Delete {{ it.name }}" aria-label="Delete {{ it.name }}" style="position:absolute;right:6px;top:50%;transform:translateY(-50%);width:28px;height:28px;border-radius:7px;border:none;background:transparent;color:#7A818C;cursor:pointer;display:grid;place-items:center;opacity:{{ it.delOpacity }};transition:opacity .12s" style-hover="background:#2A1416;color:#F87171">
+              <svg width="14" height="14" sc-camel-view-box="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 4.2h11M6.3 4.2V2.8h3.4v1.4M4 4.2l.7 9h6.6l.7-9M6.7 7v4M9.3 7v4"></path></svg>
+            </button>
+          </div>
+        </sc-for>
+      </div>
+    </aside>
+
+    <main style="flex:1;min-width:0;display:flex;flex-direction:column;min-height:0">
+      <div style="flex:none;padding:18px 32px 0;border-bottom:1px solid #1D2026;display:flex;flex-direction:column;gap:14px">
+        <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+          <div style="display:flex;flex-direction:column;gap:2px;min-width:0;flex:1">
+            <div style="display:flex;align-items:center;gap:10px">
+              <h1 style="margin:0;font-size:22px;font-weight:600;letter-spacing:-0.02em">{{ title }}</h1>
+              <sc-if value="{{ isDirty }}" hint-placeholder-val="{{ false }}">
+                <span style="font-size:12px;color:#FBBF24;display:flex;align-items:center;gap:6px"><span style="width:6px;height:6px;border-radius:50%;background:#FBBF24"></span>Unsaved changes</span>
+              </sc-if>
+              <sc-if value="{{ isClean }}" hint-placeholder-val="{{ true }}">
+                <span style="font-size:12px;color:#7A818C">All changes saved</span>
+              </sc-if>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <button sc-camel-on-click="{{ save }}" style="height:36px;padding:0 14px 0 12px;border-radius:8px;border:1px solid #2A2F37;background:#121418;color:#E8EAED;font:inherit;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:7px" style-hover="background:#181B20">
+              <svg width="14" height="14" sc-camel-view-box="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2.5h8l2.5 2.5v8.5h-11z"></path><path d="M5.5 2.5v3h5v-3M5 13.5V9.5h6v4"></path></svg>
+              Save
+            </button>
+            <button sc-camel-on-click="{{ startRun }}" style="height:36px;padding:0 16px 0 13px;border-radius:8px;border:none;background:#B9F35A;color:#0B0C0E;font:inherit;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px" style-hover="background:#C9F77A">
+              <svg width="12" height="12" sc-camel-view-box="0 0 12 12" fill="#0B0C0E"><path d="M2.5 1.5v9l8-4.5z"></path></svg>
+              {{ runLabel }}
+              <sc-if value="{{ hasIssues }}" hint-placeholder-val="{{ false }}">
+                <span style="font-size:11px;font-weight:600;padding:1px 7px;border-radius:999px;background:#0B0C0E;color:#B9F35A">{{ issueCount }} to fix</span>
+              </sc-if>
+            </button>
+          </div>
+        </div>
+        <nav style="display:flex;gap:4px">
+          <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="3">
+            <button sc-camel-on-click="{{ t.onClick }}" style="position:relative;padding:8px 12px 12px;border:none;background:transparent;color:{{ t.fg }};font:inherit;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:7px;box-shadow:{{ t.shadow }}" style-hover="color:#E8EAED">
+              <sc-if value="{{ t.isCfg }}" hint-placeholder-val="{{ false }}"><svg width="14" height="14" sc-camel-view-box="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M2.5 4.5h6M11.5 4.5h2M2.5 11.5h2M7.5 11.5h6"></path><circle cx="10" cy="4.5" r="1.6"></circle><circle cx="6" cy="11.5" r="1.6"></circle></svg></sc-if>
+              <sc-if value="{{ t.isRuns }}" hint-placeholder-val="{{ false }}"><svg width="14" height="14" sc-camel-view-box="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 13.5h11M4.5 11V8M8 11V4M11.5 11V6.5"></path></svg></sc-if>
+              <sc-if value="{{ t.isYaml }}" hint-placeholder-val="{{ false }}"><svg width="14" height="14" sc-camel-view-box="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 1.8h5.5L12.5 5v9.2H4z"></path><path d="M9.5 1.8V5h3M6.3 8.3L5 9.6l1.3 1.3M9.7 8.3L11 9.6l-1.3 1.3"></path></svg></sc-if>
+              {{ t.label }}
+              <sc-if value="{{ t.count }}" hint-placeholder-val="{{ false }}"><span style="font-size:11px;padding:0 6px;border-radius:999px;background:#1D2026;color:#9AA1AC">{{ t.count }}</span></sc-if>
+              <sc-if value="{{ t.live }}" hint-placeholder-val="{{ false }}"><span style="width:7px;height:7px;border-radius:50%;background:#B9F35A"></span></sc-if>
+            </button>
+          </sc-for>
+        </nav>
+      </div>
+
+      <div style="flex:1;overflow:auto;min-height:0">
+
+        <sc-if value="{{ onConfigure }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;flex-wrap:wrap;gap:24px;padding:28px 32px 64px;align-items:flex-start;max-width:1280px">
+            <div style="flex:1 1 560px;min-width:0;display:flex;flex-direction:column;gap:16px">
+
+              <section style="background:#121418;border:1px solid #20242B;border-radius:12px;padding:22px 24px;display:flex;flex-direction:column;gap:18px">
+                <div style="display:flex;gap:12px;align-items:flex-start">
+                  <sc-if value="{{ s1done }}" hint-placeholder-val="{{ false }}"><span style="width:24px;height:24px;border-radius:50%;background:#B9F35A;display:grid;place-items:center;flex:none"><svg width="12" height="12" sc-camel-view-box="0 0 12 12" fill="none" stroke="#0B0C0E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 6.2l2.3 2.3 4.7-5"></path></svg></span></sc-if>
+                  <sc-if value="{{ s1todo }}" hint-placeholder-val="{{ true }}"><span style="width:24px;height:24px;border-radius:50%;border:1px solid #343A43;display:grid;place-items:center;flex:none;font-size:12px;font-weight:600;color:#9AA1AC">1</span></sc-if>
+                  <div style="display:flex;flex-direction:column;gap:2px">
+                    <h2 style="margin:0;font-size:16px;font-weight:600">Where to start</h2>
+                    <sc-if value="{{ showHints }}" hint-placeholder-val="{{ true }}"><p style="margin:0;color:#9AA1AC">Give the crawler a name and the page(s) it should open first.</p></sc-if>
+                  </div>
+                </div>
+
+                <label style="display:flex;flex-direction:column;gap:7px">
+                  <span style="font-weight:500">Name</span>
+                  <input value="{{ c.name }}" disabled="{{ nameLocked }}" sc-camel-on-change="{{ onName }}" sc-camel-on-blur="{{ touchName }}" placeholder="my-news" style="background:#0E1013;border:1px solid {{ nameBorder }};border-radius:8px;padding:10px 12px;color:#E8EAED;font:inherit;font-family:'Geist Mono',monospace;font-size:13.5px;outline:none;max-width:360px" style-focus="border-color:#B9F35A">
+                  <sc-if value="{{ nameErr }}" hint-placeholder-val="{{ false }}"><span style="font-size:12.5px;color:#F87171">{{ nameErr }}</span></sc-if>
+                  <sc-if value="{{ nameHint }}" hint-placeholder-val="{{ true }}"><span style="font-size:12.5px;color:#7A818C">Lowercase letters, numbers and dashes. Used for the file name and run history.</span></sc-if>
+                </label>
+
+                <div style="display:flex;flex-direction:column;gap:8px">
+                  <span style="font-weight:500">Start pages</span>
+                  <sc-if value="{{ hasUrls }}" hint-placeholder-val="{{ true }}">
+                    <div style="display:flex;flex-direction:column;border:1px solid #23272E;border-radius:8px;overflow:hidden">
+                      <sc-for list="{{ urlRows }}" as="u" hint-placeholder-count="1">
+                        <div style="display:flex;align-items:center;gap:10px;padding:8px 8px 8px 12px;background:#0E1013;border-bottom:1px solid #1B1E24">
+                          <svg width="14" height="14" sc-camel-view-box="0 0 16 16" fill="none" stroke="#7A818C" stroke-width="1.5"><circle cx="8" cy="8" r="6.3"></circle><path d="M1.8 8h12.4M8 1.7c2 2.2 2 10.4 0 12.6M8 1.7c-2 2.2-2 10.4 0 12.6"></path></svg>
+                          <span style="flex:1;min-width:0;font-family:'Geist Mono',monospace;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ u.url }}</span>
+                          <button sc-camel-on-click="{{ u.remove }}" title="Remove" style="width:28px;height:28px;border-radius:6px;border:none;background:transparent;color:#7A818C;cursor:pointer;display:grid;place-items:center" style-hover="background:#1D2026;color:#F87171"><svg width="12" height="12" sc-camel-view-box="0 0 12 12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M3 3l6 6M9 3l-6 6"></path></svg></button>
+                        </div>
+                      </sc-for>
+                    </div>
+                  </sc-if>
+                  <div style="display:flex;gap:8px">
+                    <input value="{{ urlDraft }}" sc-camel-on-change="{{ onUrlDraft }}" sc-camel-on-key-down="{{ onUrlKey }}" placeholder="https://example.com/latest" style="flex:1;min-width:0;background:#0E1013;border:1px solid {{ urlBorder }};border-radius:8px;padding:10px 12px;color:#E8EAED;font:inherit;font-family:'Geist Mono',monospace;font-size:13.5px;outline:none" style-focus="border-color:#B9F35A">
+                    <button sc-camel-on-click="{{ addUrl }}" style="height:40px;padding:0 14px;border-radius:8px;border:1px solid #2A2F37;background:#181B20;color:#E8EAED;font:inherit;font-weight:500;cursor:pointer" style-hover="border-color:#B9F35A">Add</button>
+                  </div>
+                  <sc-if value="{{ urlErr }}" hint-placeholder-val="{{ false }}"><span style="font-size:12.5px;color:#F87171">{{ urlErr }}</span></sc-if>
+                  <sc-if value="{{ urlHint }}" hint-placeholder-val="{{ true }}"><span style="font-size:12.5px;color:#7A818C">Paste one or more addresses and press Enter. The crawler stays on these sites.</span></sc-if>
+                  <sc-if value="{{ hasDomains }}" hint-placeholder-val="{{ false }}">
+                    <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:12.5px;color:#9AA1AC">
+                      Stays within
+                      <sc-for list="{{ domains }}" as="d" hint-placeholder-count="1"><span style="font-family:'Geist Mono',monospace;padding:2px 8px;border-radius:6px;background:#1A1D22;color:#E8EAED">{{ d }}</span></sc-for>
+                    </div>
+                  </sc-if>
+                </div>
+              </section>
+
+              <section style="background:#121418;border:1px solid #20242B;border-radius:12px;padding:22px 24px;display:flex;flex-direction:column;gap:18px">
+                <div style="display:flex;gap:12px;align-items:flex-start">
+                  <sc-if value="{{ s2done }}" hint-placeholder-val="{{ false }}"><span style="width:24px;height:24px;border-radius:50%;background:#B9F35A;display:grid;place-items:center;flex:none"><svg width="12" height="12" sc-camel-view-box="0 0 12 12" fill="none" stroke="#0B0C0E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 6.2l2.3 2.3 4.7-5"></path></svg></span></sc-if>
+                  <sc-if value="{{ s2todo }}" hint-placeholder-val="{{ true }}"><span style="width:24px;height:24px;border-radius:50%;border:1px solid #343A43;display:grid;place-items:center;flex:none;font-size:12px;font-weight:600;color:#9AA1AC">2</span></sc-if>
+                  <div style="display:flex;flex-direction:column;gap:2px">
+                    <h2 style="margin:0;font-size:16px;font-weight:600">What to collect</h2>
+                    <sc-if value="{{ showHints }}" hint-placeholder-val="{{ true }}"><p style="margin:0;color:#9AA1AC">Choose how the crawler finds the data on each page.</p></sc-if>
+                  </div>
+                </div>
+
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px">
+                  <sc-for list="{{ modeOpts }}" as="m" hint-placeholder-count="2">
+                    <button sc-camel-on-click="{{ m.onClick }}" style="text-align:left;padding:14px 16px;border-radius:10px;border:1px solid {{ m.border }};background:{{ m.bg }};color:#E8EAED;font:inherit;cursor:pointer;display:flex;flex-direction:column;gap:4px" style-hover="border-color:#4A515C">
+                      <span style="display:flex;align-items:center;gap:8px;font-weight:600">
+                        <span style="width:14px;height:14px;border-radius:50%;border:1.5px solid {{ m.ring }};display:grid;place-items:center"><span style="width:6px;height:6px;border-radius:50%;background:{{ m.fill }}"></span></span>
+                        {{ m.title }}
+                      </span>
+                      <span style="font-size:12.5px;color:#9AA1AC;padding-left:22px">{{ m.desc }}</span>
+                    </button>
+                  </sc-for>
+                </div>
+
+                <sc-if value="{{ isCss }}" hint-placeholder-val="{{ true }}">
+                  <div style="display:flex;flex-direction:column;gap:18px">
+                    <label style="display:flex;flex-direction:column;gap:7px">
+                      <span style="font-weight:500">Repeating block <span style="font-weight:400;color:#7A818C">· optional</span></span>
+                      <input value="{{ c.item }}" sc-camel-on-change="{{ onItem }}" placeholder="article.product" style="background:#0E1013;border:1px solid #2A2F37;border-radius:8px;padding:10px 12px;color:#E8EAED;font:inherit;font-family:'Geist Mono',monospace;font-size:13.5px;outline:none;max-width:360px" style-focus="border-color:#B9F35A">
+                      <sc-if value="{{ showHints }}" hint-placeholder-val="{{ true }}"><span style="font-size:12.5px;color:#7A818C">The element that wraps one result — one product, one post. Leave empty to save one record per page.</span></sc-if>
+                    </label>
+
+                    <div style="display:flex;flex-direction:column;gap:8px">
+                      <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px">
+                        <span style="font-weight:500">Fields</span>
+                        <a href="#" sc-camel-on-click="{{ openHelpSel }}" style="font-size:12.5px">How do I find a selector?</a>
+                      </div>
+                      <div style="display:grid;grid-template-columns:minmax(0,0.8fr) minmax(0,1.4fr) 132px 32px;gap:8px;font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:#7A818C;padding:0 2px">
+                        <span>Column name</span><span>CSS selector</span><span>Save</span><span></span>
+                      </div>
+                      <sc-for list="{{ fieldRows }}" as="f" hint-placeholder-count="2">
+                        <div style="display:grid;grid-template-columns:minmax(0,0.8fr) minmax(0,1.4fr) 132px 32px;gap:8px;align-items:center">
+                          <input value="{{ f.name }}" sc-camel-on-change="{{ f.onName }}" placeholder="title" style="min-width:0;background:#0E1013;border:1px solid #2A2F37;border-radius:8px;padding:9px 11px;color:#E8EAED;font:inherit;font-size:13.5px;outline:none" style-focus="border-color:#B9F35A">
+                          <input value="{{ f.selector }}" sc-camel-on-change="{{ f.onSel }}" placeholder="h2.title" style="min-width:0;background:#0E1013;border:1px solid #2A2F37;border-radius:8px;padding:9px 11px;color:#E8EAED;font:inherit;font-family:'Geist Mono',monospace;font-size:13px;outline:none" style-focus="border-color:#B9F35A">
+                          <sc-raw-select value="{{ f.get }}" sc-camel-on-change="{{ f.onGet }}" style="background:#0E1013;border:1px solid #2A2F37;border-radius:8px;padding:9px 8px;color:#E8EAED;font:inherit;font-size:13px;outline:none;cursor:pointer">
+                            <option value="text">Text</option>
+                            <option value="link">Link URL</option>
+                            <option value="attr">Attribute…</option>
+                          </sc-raw-select>
+                          <button sc-camel-on-click="{{ f.remove }}" title="Remove field" style="width:32px;height:36px;border-radius:7px;border:none;background:transparent;color:#7A818C;cursor:pointer;display:grid;place-items:center" style-hover="background:#1D2026;color:#F87171"><svg width="12" height="12" sc-camel-view-box="0 0 12 12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M3 3l6 6M9 3l-6 6"></path></svg></button>
+                          <sc-if value="{{ f.isAttr }}" hint-placeholder-val="{{ false }}">
+                            <div style="grid-column:2 / 4;display:flex;align-items:center;gap:8px;font-size:12.5px;color:#9AA1AC">
+                              Attribute
+                              <input value="{{ f.attr }}" sc-camel-on-change="{{ f.onAttr }}" placeholder="title, src, data-id…" style="flex:1;min-width:0;background:#0E1013;border:1px solid #2A2F37;border-radius:7px;padding:6px 10px;color:#E8EAED;font:inherit;font-family:'Geist Mono',monospace;font-size:12.5px;outline:none" style-focus="border-color:#B9F35A">
+                            </div>
+                          </sc-if>
+                        </div>
+                      </sc-for>
+                      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+                        <button sc-camel-on-click="{{ addField }}" style="display:flex;align-items:center;gap:6px;height:32px;padding:0 12px;border-radius:7px;border:1px solid #2A2F37;background:transparent;color:#E8EAED;font:inherit;font-size:13px;font-weight:500;cursor:pointer" style-hover="border-color:#B9F35A">
+                          <svg width="12" height="12" sc-camel-view-box="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M8 3v10M3 8h10"></path></svg>Add field
+                        </button>
+                        <sc-if value="{{ fieldsErr }}" hint-placeholder-val="{{ false }}"><span style="font-size:12.5px;color:#F87171">Add at least one field with a name and a selector.</span></sc-if>
+                      </div>
+                    </div>
+                  </div>
+                </sc-if>
+
+                <sc-if value="{{ isAi }}" hint-placeholder-val="{{ false }}">
+                  <div style="display:flex;flex-direction:column;gap:10px">
+                    <label style="display:flex;flex-direction:column;gap:7px">
+                      <span style="font-weight:500">Describe what to collect</span>
+                      <textarea value="{{ c.description }}" sc-camel-on-change="{{ onDesc }}" rows="3" placeholder="Each product's name, price and rating" style="background:#0E1013;border:1px solid {{ descBorder }};border-radius:8px;padding:10px 12px;color:#E8EAED;font:inherit;font-size:14px;outline:none;resize:vertical" style-focus="border-color:#B9F35A"></textarea>
+                    </label>
+                    <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;font-size:12.5px;color:#7A818C">
+                      Try
+                      <sc-for list="{{ descExamples }}" as="e" hint-placeholder-count="3">
+                        <button sc-camel-on-click="{{ e.onClick }}" style="padding:3px 10px;border-radius:999px;border:1px solid #2A2F37;background:transparent;color:#C9CDD3;font:inherit;font-size:12.5px;cursor:pointer" style-hover="border-color:#B9F35A;color:#E8EAED">{{ e.label }}</button>
+                      </sc-for>
+                    </div>
+                    <sc-if value="{{ descErr }}" hint-placeholder-val="{{ false }}"><span style="font-size:12.5px;color:#F87171">Tell the AI what you want saved from each page.</span></sc-if>
+                    <div style="display:flex;gap:10px;padding:11px 13px;border-radius:8px;background:#1A1710;border:1px solid #3A3220;font-size:13px;color:#E8DFC8">
+                      <svg width="16" height="16" sc-camel-view-box="0 0 16 16" fill="none" stroke="#FBBF24" stroke-width="1.6" stroke-linecap="round" style="flex:none;margin-top:1px"><path d="M8 1.8l6.5 11.4H1.5z"></path><path d="M8 6.3v3.2"></path><circle cx="8" cy="11.4" r=".4" fill="#FBBF24"></circle></svg>
+                      <span>Needs a Claude API key saved as <code style="font-family:'Geist Mono',monospace;font-size:12px;color:#FBBF24">ANTHROPIC_API_KEY</code> in your <code style="font-family:'Geist Mono',monospace;font-size:12px">.env</code> file. No key? Use “Pick with CSS” instead.</span>
+                    </div>
+                  </div>
+                </sc-if>
+              </section>
+
+              <section style="background:#121418;border:1px solid #20242B;border-radius:12px;padding:22px 24px;display:flex;flex-direction:column;gap:18px">
+                <div style="display:flex;gap:12px;align-items:flex-start">
+                  <span style="width:24px;height:24px;border-radius:50%;border:1px solid #343A43;display:grid;place-items:center;flex:none;font-size:12px;font-weight:600;color:#9AA1AC">3</span>
+                  <div style="display:flex;flex-direction:column;gap:2px;flex:1">
+                    <h2 style="margin:0;font-size:16px;font-weight:600">Follow more pages <span style="font-weight:400;font-size:13px;color:#7A818C">· optional</span></h2>
+                    <sc-if value="{{ showHints }}" hint-placeholder-val="{{ true }}"><p style="margin:0;color:#9AA1AC">Click through “Next” buttons to crawl a whole list.</p></sc-if>
+                  </div>
+                  <button sc-camel-on-click="{{ toggleFollow }}" aria-label="Toggle pagination" style="width:40px;height:22px;border-radius:999px;border:none;padding:2px;background:{{ followTrack }};cursor:pointer;flex:none;display:flex">
+                    <span style="width:18px;height:18px;border-radius:50%;background:#0B0C0E;transform:translateX({{ followKnob }});transition:transform .15s"></span>
+                  </button>
+                </div>
+                <sc-if value="{{ c.follow.on }}" hint-placeholder-val="{{ false }}">
+                  <div style="display:flex;gap:16px;flex-wrap:wrap">
+                    <label style="display:flex;flex-direction:column;gap:7px;flex:1 1 260px">
+                      <span style="font-weight:500">“Next page” link selector</span>
+                      <input value="{{ c.follow.next }}" sc-camel-on-change="{{ onNext }}" placeholder="li.next a" style="background:#0E1013;border:1px solid #2A2F37;border-radius:8px;padding:10px 12px;color:#E8EAED;font:inherit;font-family:'Geist Mono',monospace;font-size:13.5px;outline:none" style-focus="border-color:#B9F35A">
+                    </label>
+                    <div style="display:flex;flex-direction:column;gap:7px">
+                      <span style="font-weight:500">Stop after</span>
+                      <div style="display:flex;align-items:center;border:1px solid #2A2F37;border-radius:8px;background:#0E1013;height:42px">
+                        <button sc-camel-on-click="{{ maxDec }}" style="width:38px;height:100%;border:none;background:transparent;color:#E8EAED;font-size:16px;cursor:pointer" style-hover="color:#B9F35A">−</button>
+                        <span style="min-width:72px;text-align:center;font-variant-numeric:tabular-nums">{{ c.follow.max }} pages</span>
+                        <button sc-camel-on-click="{{ maxInc }}" style="width:38px;height:100%;border:none;background:transparent;color:#E8EAED;font-size:16px;cursor:pointer" style-hover="color:#B9F35A">+</button>
+                      </div>
+                    </div>
+                  </div>
+                </sc-if>
+              </section>
+
+              <section style="background:#121418;border:1px solid #20242B;border-radius:12px;padding:22px 24px;display:flex;flex-direction:column;gap:20px">
+                <div style="display:flex;gap:12px;align-items:flex-start">
+                  <span style="width:24px;height:24px;border-radius:50%;border:1px solid #343A43;display:grid;place-items:center;flex:none;font-size:12px;font-weight:600;color:#9AA1AC">4</span>
+                  <div style="display:flex;flex-direction:column;gap:2px">
+                    <h2 style="margin:0;font-size:16px;font-weight:600">Crawl behavior</h2>
+                    <sc-if value="{{ showHints }}" hint-placeholder-val="{{ true }}"><p style="margin:0;color:#9AA1AC">The defaults are safe for most sites. Change only if you get blocked.</p></sc-if>
+                  </div>
+                </div>
+
+                <div style="display:flex;flex-direction:column;gap:8px">
+                  <span style="font-weight:500">Stealth</span>
+                  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px">
+                    <sc-for list="{{ stealthOpts }}" as="s" hint-placeholder-count="3">
+                      <button sc-camel-on-click="{{ s.onClick }}" style="text-align:left;padding:12px 14px;border-radius:10px;border:1px solid {{ s.border }};background:{{ s.bg }};color:#E8EAED;font:inherit;cursor:pointer;display:flex;flex-direction:column;gap:4px" style-hover="border-color:#4A515C">
+                        <span style="display:flex;align-items:center;gap:8px;font-weight:600">{{ s.title }}
+                          <sc-if value="{{ s.rec }}" hint-placeholder-val="{{ false }}"><span style="font-size:10.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:#B9F35A">Recommended</span></sc-if>
+                        </span>
+                        <span style="font-size:12.5px;color:#9AA1AC">{{ s.desc }}</span>
+                      </button>
+                    </sc-for>
+                  </div>
+                </div>
+
+                <div style="display:flex;flex-direction:column;gap:8px">
+                  <span style="font-weight:500">Speed</span>
+                  <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+                    <div style="display:flex;padding:3px;border-radius:9px;background:#0E1013;border:1px solid #23272E">
+                      <sc-for list="{{ speedOpts }}" as="o" hint-placeholder-count="3">
+                        <button sc-camel-on-click="{{ o.onClick }}" style="padding:6px 14px;border-radius:6px;border:none;background:{{ o.bg }};color:{{ o.fg }};font:inherit;font-size:13px;font-weight:500;cursor:pointer">{{ o.label }}</button>
+                      </sc-for>
+                    </div>
+                    <span style="font-size:12.5px;color:#9AA1AC">{{ speedSummary }}</span>
+                    <a href="#" sc-camel-on-click="{{ toggleCustom }}" style="font-size:12.5px">{{ customLabel }}</a>
+                  </div>
+                  <sc-if value="{{ showCustom }}" hint-placeholder-val="{{ false }}">
+                    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:4px">
+                      <label style="display:flex;flex-direction:column;gap:6px;width:170px"><span style="font-size:12.5px;color:#9AA1AC">Requests / second per site</span>
+                        <input type="number" step="0.5" min="0.1" value="{{ c.rps }}" sc-camel-on-change="{{ onRps }}" style="background:#0E1013;border:1px solid #2A2F37;border-radius:8px;padding:8px 11px;color:#E8EAED;font:inherit;outline:none" style-focus="border-color:#B9F35A"></label>
+                      <label style="display:flex;flex-direction:column;gap:6px;width:170px"><span style="font-size:12.5px;color:#9AA1AC">Pages in parallel</span>
+                        <input type="number" min="1" value="{{ c.workers }}" sc-camel-on-change="{{ onWorkers }}" style="background:#0E1013;border:1px solid #2A2F37;border-radius:8px;padding:8px 11px;color:#E8EAED;font:inherit;outline:none" style-focus="border-color:#B9F35A"></label>
+                    </div>
+                  </sc-if>
+                </div>
+
+                <div style="display:flex;flex-direction:column;border-top:1px solid #1D2026">
+                  <div style="display:flex;align-items:center;gap:16px;padding:14px 0;border-bottom:1px solid #1D2026">
+                    <div style="flex:1;display:flex;flex-direction:column;gap:2px">
+                      <span style="font-weight:500">Respect robots.txt</span>
+                      <span style="font-size:12.5px;color:#9AA1AC">Skip pages the site owner asked bots not to visit.</span>
+                    </div>
+                    <button sc-camel-on-click="{{ toggleRobots }}" aria-label="Toggle robots.txt" style="width:40px;height:22px;border-radius:999px;border:none;padding:2px;background:{{ robotsTrack }};cursor:pointer;flex:none;display:flex">
+                      <span style="width:18px;height:18px;border-radius:50%;background:#0B0C0E;transform:translateX({{ robotsKnob }});transition:transform .15s"></span>
+                    </button>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:16px;padding:14px 0 0;flex-wrap:wrap">
+                    <div style="flex:1 1 220px;display:flex;flex-direction:column;gap:2px">
+                      <span style="font-weight:500">If a CAPTCHA appears</span>
+                      <span style="font-size:12.5px;color:#9AA1AC">CAPTCHAs are never solved automatically.</span>
+                    </div>
+                    <div style="display:flex;padding:3px;border-radius:9px;background:#0E1013;border:1px solid #23272E">
+                      <sc-for list="{{ captchaOpts }}" as="o" hint-placeholder-count="2">
+                        <button sc-camel-on-click="{{ o.onClick }}" style="padding:6px 14px;border-radius:6px;border:none;background:{{ o.bg }};color:{{ o.fg }};font:inherit;font-size:13px;font-weight:500;cursor:pointer">{{ o.label }}</button>
+                      </sc-for>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <section style="background:#121418;border:1px solid #20242B;border-radius:12px;padding:22px 24px;display:flex;flex-direction:column;gap:18px">
+                <div style="display:flex;gap:12px;align-items:flex-start">
+                  <span style="width:24px;height:24px;border-radius:50%;border:1px solid #343A43;display:grid;place-items:center;flex:none;font-size:12px;font-weight:600;color:#9AA1AC">5</span>
+                  <div style="display:flex;flex-direction:column;gap:2px;flex:1">
+                    <h2 style="margin:0;font-size:16px;font-weight:600">Run automatically <span style="font-weight:400;font-size:13px;color:#7A818C">· optional</span></h2>
+                    <p style="margin:0;color:#9AA1AC">{{ scheduleSummary }}</p>
+                  </div>
+                  <button sc-camel-on-click="{{ toggleSchedule }}" aria-label="Toggle schedule" style="width:40px;height:22px;border-radius:999px;border:none;padding:2px;background:{{ schedTrack }};cursor:pointer;flex:none;display:flex">
+                    <span style="width:18px;height:18px;border-radius:50%;background:#0B0C0E;transform:translateX({{ schedKnob }});transition:transform .15s"></span>
+                  </button>
+                </div>
+                <sc-if value="{{ c.schedule.on }}" hint-placeholder-val="{{ false }}">
+                  <div style="display:flex;flex-direction:column;gap:12px">
+                    <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+                      <div style="display:flex;padding:3px;border-radius:9px;background:#0E1013;border:1px solid #23272E">
+                        <sc-for list="{{ freqOpts }}" as="o" hint-placeholder-count="3">
+                          <button sc-camel-on-click="{{ o.onClick }}" style="padding:6px 14px;border-radius:6px;border:none;background:{{ o.bg }};color:{{ o.fg }};font:inherit;font-size:13px;font-weight:500;cursor:pointer">{{ o.label }}</button>
+                        </sc-for>
+                      </div>
+                      <sc-if value="{{ isWeekly }}" hint-placeholder-val="{{ false }}">
+                        <sc-raw-select value="{{ c.schedule.day }}" sc-camel-on-change="{{ onDay }}" style="background:#0E1013;border:1px solid #2A2F37;border-radius:8px;padding:8px 10px;color:#E8EAED;font:inherit;font-size:13px;outline:none">
+                          <option value="Mon">Monday</option><option value="Tue">Tuesday</option><option value="Wed">Wednesday</option><option value="Thu">Thursday</option><option value="Fri">Friday</option><option value="Sat">Saturday</option><option value="Sun">Sunday</option>
+                        </sc-raw-select>
+                      </sc-if>
+                      <sc-if value="{{ hasTime }}" hint-placeholder-val="{{ true }}">
+                        <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:#9AA1AC">at
+                          <input type="time" value="{{ c.schedule.time }}" sc-camel-on-change="{{ onTime }}" style="background:#0E1013;border:1px solid #2A2F37;border-radius:8px;padding:7px 10px;color:#E8EAED;font:inherit;font-size:13px;outline:none" style-focus="border-color:#B9F35A">
+                        </label>
+                      </sc-if>
+                    </div>
+                    <sc-if value="{{ hasNext }}" hint-placeholder-val="{{ false }}">
+                      <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:10px;background:#0E1013;border:1px solid #23272E;flex-wrap:wrap">
+                        <svg width="16" height="16" sc-camel-view-box="0 0 16 16" fill="none" stroke="#B9F35A" stroke-width="1.6" stroke-linecap="round"><circle cx="8" cy="8" r="6.2"></circle><path d="M8 4.6V8l2.3 1.5"></path></svg>
+                        <div style="flex:1;min-width:180px;display:flex;flex-direction:column;gap:6px">
+                          <span style="font-weight:500;font-variant-numeric:tabular-nums">{{ nextText }}</span>
+                          <span style="display:block;height:4px;border-radius:2px;background:#23272E;overflow:hidden"><span style="display:block;height:100%;width:{{ nextPct }};background:#B9F35A;transition:width 1s linear"></span></span>
+                        </div>
+                        <button sc-camel-on-click="{{ runNowSched }}" style="height:30px;padding:0 12px;border-radius:7px;border:1px solid #2A2F37;background:transparent;color:#E8EAED;font:inherit;font-size:13px;font-weight:500;cursor:pointer" style-hover="border-color:#B9F35A">Run now</button>
+                      </div>
+                    </sc-if>
+                    <sc-if value="{{ schedNotReady }}" hint-placeholder-val="{{ false }}">
+                      <span style="font-size:12.5px;color:#FBBF24">Finish setup above — scheduled runs start once the crawler is ready.</span>
+                    </sc-if>
+                    <sc-if value="{{ schedPaused }}" hint-placeholder-val="{{ false }}">
+                      <span style="font-size:12.5px;color:#9AA1AC">The scheduler is paused. <a href="#" sc-camel-on-click="{{ resumeScheduler }}">Resume</a></span>
+                    </sc-if>
+                    <sc-if value="{{ fastNote }}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;color:#7A818C">{{ fastNote }}</span></sc-if>
+                    <span style="font-size:12.5px;color:#7A818C">Scheduled runs need the <code style="font-family:'Geist Mono',monospace;font-size:12px;color:#C9CDD3">schedule</code> process running on your machine — see DEPLOYMENT.md.</span>
+                  </div>
+                </sc-if>
+              </section>
+            </div>
+
+            <aside style="flex:1 1 300px;max-width:380px;min-width:0;position:sticky;top:28px;display:flex;flex-direction:column;gap:16px">
+              <div style="background:#121418;border:1px solid #20242B;border-radius:12px;padding:18px 20px;display:flex;flex-direction:column;gap:14px">
+                <div style="display:flex;align-items:center;justify-content:space-between">
+                  <span style="font-weight:600">Ready to run?</span>
+                  <span style="font-size:12.5px;color:{{ readyColor }}">{{ readyText }}</span>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:10px">
+                  <sc-for list="{{ checks }}" as="k" hint-placeholder-count="3">
+                    <div style="display:flex;gap:10px;align-items:flex-start">
+                      <sc-if value="{{ k.ok }}" hint-placeholder-val="{{ false }}"><span style="width:18px;height:18px;border-radius:50%;background:#B9F35A;display:grid;place-items:center;flex:none;margin-top:1px"><svg width="10" height="10" sc-camel-view-box="0 0 12 12" fill="none" stroke="#0B0C0E" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 6.2l2.3 2.3 4.7-5"></path></svg></span></sc-if>
+                      <sc-if value="{{ k.notOk }}" hint-placeholder-val="{{ true }}"><span style="width:18px;height:18px;border-radius:50%;border:1.5px dashed {{ k.ring }};flex:none;box-sizing:border-box;margin-top:1px"></span></sc-if>
+                      <div style="display:flex;flex-direction:column">
+                        <span style="color:{{ k.fg }}">{{ k.label }}</span>
+                        <sc-if value="{{ k.notOk }}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;color:#7A818C">{{ k.hint }}</span></sc-if>
+                      </div>
+                    </div>
+                  </sc-for>
+                </div>
+                <div style="border-top:1px solid #1D2026;padding-top:12px;display:flex;flex-direction:column;gap:7px;font-size:12.5px">
+                  <sc-for list="{{ plan }}" as="p" hint-placeholder-count="4">
+                    <div style="display:flex;justify-content:space-between;gap:12px"><span style="color:#7A818C">{{ p.k }}</span><span style="color:#C9CDD3;text-align:right">{{ p.v }}</span></div>
+                  </sc-for>
+                </div>
+              </div>
+
+              <div style="background:#121418;border:1px solid #20242B;border-radius:12px;padding:18px 20px;display:flex;flex-direction:column;gap:12px">
+                <div style="display:flex;flex-direction:column;gap:2px">
+                  <span style="font-weight:600">Test on the first page</span>
+                  <span style="font-size:12.5px;color:#9AA1AC">Check your fields pick up the right data before a full run.</span>
+                </div>
+                <button sc-camel-on-click="{{ runTest }}" style="height:36px;border-radius:8px;border:1px solid #2A2F37;background:#181B20;color:{{ testBtnFg }};font:inherit;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px" style-hover="border-color:#B9F35A">
+                  <sc-if value="{{ testLoading }}" hint-placeholder-val="{{ false }}"><span style="width:12px;height:12px;border-radius:50%;border:2px solid #343A43;border-top-color:#B9F35A;animation:cs-spin .7s linear infinite"></span></sc-if>
+                  {{ testLabel }}
+                </button>
+                <sc-if value="{{ testBlocked }}" hint-placeholder-val="{{ false }}"><span style="font-size:12.5px;color:#9AA1AC">{{ testMsg }}</span></sc-if>
+                <sc-if value="{{ testDone }}" hint-placeholder-val="{{ false }}">
+                  <div style="display:flex;flex-direction:column;gap:8px">
+                    <span style="font-size:12.5px;color:#B9F35A">{{ testCountText }}</span>
+                    <sc-for list="{{ testRecords }}" as="r" hint-placeholder-count="3">
+                      <div style="border:1px solid #23272E;border-radius:8px;padding:9px 11px;display:flex;flex-direction:column;gap:3px;background:#0E1013">
+                        <sc-for list="{{ r.cells }}" as="cell" hint-placeholder-count="3">
+                          <div style="display:grid;grid-template-columns:86px minmax(0,1fr);gap:8px;font-size:12.5px">
+                            <span style="color:#7A818C;font-family:'Geist Mono',monospace;overflow:hidden;text-overflow:ellipsis">{{ cell.k }}</span>
+                            <span style="color:#E8EAED;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ cell.v }}</span>
+                          </div>
+                        </sc-for>
+                      </div>
+                    </sc-for>
+                  </div>
+                </sc-if>
+              </div>
+            </aside>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ onRuns }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:28px 32px 64px;max-width:1320px;display:flex;flex-direction:column;gap:20px">
+
+            <sc-if value="{{ isQueued }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;align-items:center;gap:12px;padding:14px 18px;border-radius:12px;background:#121418;border:1px solid #20242B">
+                <span style="width:14px;height:14px;border-radius:50%;border:2px solid #343A43;border-top-color:#9AA1AC;animation:cs-spin 1.2s linear infinite;box-sizing:border-box"></span>
+                <span style="font-weight:500">Queued</span><span style="color:#9AA1AC">Starts automatically when the current run finishes.</span>
+              </div>
+            </sc-if>
+            <sc-if value="{{ hasLive }}" hint-placeholder-val="{{ false }}">
+              <div style="background:#121418;border:1px solid #20242B;border-radius:12px;overflow:hidden">
+                <div style="display:flex;align-items:center;gap:14px;padding:16px 20px;flex-wrap:wrap">
+                  {{ liveDot }}
+                  <div style="display:flex;flex-direction:column;flex:1;min-width:180px">
+                    <span style="font-weight:600">{{ liveTitle }}</span>
+                    <span style="font-size:12.5px;color:#9AA1AC">Started {{ liveStarted }} · {{ liveElapsed }}</span>
+                  </div>
+                  <div style="display:flex;gap:28px">
+                    <div style="display:flex;flex-direction:column"><span style="font-size:11.5px;color:#7A818C;text-transform:uppercase;letter-spacing:.06em">Pages</span><span style="font-size:20px;font-weight:600;font-variant-numeric:tabular-nums">{{ livePages }}</span></div>
+                    <div style="display:flex;flex-direction:column"><span style="font-size:11.5px;color:#7A818C;text-transform:uppercase;letter-spacing:.06em">Items</span><span style="font-size:20px;font-weight:600;font-variant-numeric:tabular-nums">{{ run.items }}</span></div>
+                    <div style="display:flex;flex-direction:column"><span style="font-size:11.5px;color:#7A818C;text-transform:uppercase;letter-spacing:.06em">Errors</span><span style="font-size:20px;font-weight:600;font-variant-numeric:tabular-nums">{{ run.errors }}</span></div>
+                  </div>
+                  <sc-if value="{{ liveRunning }}" hint-placeholder-val="{{ false }}">
+                    <button sc-camel-on-click="{{ stopRun }}" style="height:34px;padding:0 14px;border-radius:8px;border:1px solid #4A2A2A;background:transparent;color:#F87171;font:inherit;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:8px" style-hover="background:#1F1414"><span style="width:9px;height:9px;border-radius:2px;background:#F87171"></span>Stop</button>
+                  </sc-if>
+                  <sc-if value="{{ liveFinished }}" hint-placeholder-val="{{ false }}">
+                    <button sc-camel-on-click="{{ viewLiveResults }}" style="height:34px;padding:0 14px;border-radius:8px;border:none;background:#B9F35A;color:#0B0C0E;font:inherit;font-weight:600;cursor:pointer" style-hover="background:#C9F77A">View {{ run.items }} items →</button>
+                  </sc-if>
+                </div>
+                <div style="height:3px;background:#1A1D22"><div style="height:100%;width:{{ progressPct }};background:#B9F35A;transition:width .3s"></div></div>
+                <div ref="{{ logRef }}" style="background:#08090B;padding:14px 20px;height:240px;overflow:auto;font-family:'Geist Mono',monospace;font-size:12.5px;line-height:1.75">
+                  <sc-for list="{{ logLines }}" as="l" hint-placeholder-count="0">
+                    <div style="display:flex;gap:14px"><span style="color:#5F6670;flex:none">{{ l.time }}</span><span style="color:{{ l.color }};width:40px;flex:none">{{ l.t }}</span><span style="color:#C9CDD3;min-width:0">{{ l.m }}</span></div>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ showRunList }}" hint-placeholder-val="{{ true }}">
+              <div style="display:flex;flex-direction:column;gap:12px">
+                <h2 style="margin:0;font-size:16px;font-weight:600">History</h2>
+                <sc-if value="{{ noRuns }}" hint-placeholder-val="{{ false }}">
+                  <div style="border:1px dashed #2A2F37;border-radius:12px;padding:40px 24px;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center">
+                    <span style="font-weight:600">No runs yet</span>
+                    <span style="color:#9AA1AC;max-width:360px">Each time you run this crawler, its data shows up here — ready to view and export.</span>
+                    <button sc-camel-on-click="{{ startRun }}" style="margin-top:6px;height:36px;padding:0 16px;border-radius:8px;border:none;background:#B9F35A;color:#0B0C0E;font:inherit;font-weight:600;cursor:pointer">Run now</button>
+                  </div>
+                </sc-if>
+                <sc-if value="{{ hasRuns }}" hint-placeholder-val="{{ true }}">
+                  <div style="background:#121418;border:1px solid #20242B;border-radius:12px;overflow:hidden">
+                    <div style="display:grid;grid-template-columns:60px 130px 120px minmax(0,1fr) 90px 80px 80px 24px;gap:12px;padding:10px 20px;font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:#7A818C;border-bottom:1px solid #1D2026">
+                      <span>Run</span><span>Status</span><span>Trigger</span><span>Started</span><span>Duration</span><span>Pages</span><span>Items</span><span></span>
+                    </div>
+                    <sc-for list="{{ runRows }}" as="r" hint-placeholder-count="1">
+                      <button sc-camel-on-click="{{ r.onClick }}" style="display:grid;grid-template-columns:60px 130px 120px minmax(0,1fr) 90px 80px 80px 24px;gap:12px;align-items:center;padding:13px 20px;border:none;border-bottom:1px solid #1A1D22;background:transparent;color:#E8EAED;font:inherit;text-align:left;cursor:pointer;width:100%" style-hover="background:#16191E">
+                        <span style="color:#9AA1AC;font-family:'Geist Mono',monospace">#{{ r.id }}</span>
+                        <span style="display:flex;align-items:center;gap:7px;color:{{ r.color }}"><span style="width:7px;height:7px;border-radius:50%;background:{{ r.color }}"></span>{{ r.statusLabel }}</span>
+                        <span style="display:flex;align-items:center;gap:6px;color:#9AA1AC;font-size:13px">
+                          <sc-if value="{{ r.isSched }}" hint-placeholder-val="{{ false }}"><svg width="12" height="12" sc-camel-view-box="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="8" cy="8" r="6.2"></circle><path d="M8 4.6V8l2.3 1.5"></path></svg>Scheduled</sc-if>
+                          <sc-if value="{{ r.isManual }}" hint-placeholder-val="{{ true }}"><svg width="11" height="11" sc-camel-view-box="0 0 12 12" fill="currentColor"><path d="M2.5 1.5v9l8-4.5z"></path></svg>Manual</sc-if>
+                        </span>
+                        <span>{{ r.started }}</span>
+                        <span style="color:#9AA1AC;font-variant-numeric:tabular-nums">{{ r.duration }}</span>
+                        <span style="font-variant-numeric:tabular-nums">{{ r.pages }}</span>
+                        <span style="font-variant-numeric:tabular-nums">{{ r.items }}</span>
+                        <svg width="12" height="12" sc-camel-view-box="0 0 12 12" fill="none" stroke="#7A818C" stroke-width="1.6" stroke-linecap="round"><path d="M4.5 2.5L8 6l-3.5 3.5"></path></svg>
+                      </button>
+                    </sc-for>
+                  </div>
+                </sc-if>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ hasDetail }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;flex-direction:column;gap:16px">
+                <div style="display:flex;align-items:flex-start;gap:14px;flex-wrap:wrap">
+                  <button sc-camel-on-click="{{ closeRun }}" aria-label="All runs" title="All runs" style="width:34px;height:34px;flex:none;border-radius:8px;border:1px solid #2A2F37;background:transparent;color:#E8EAED;cursor:pointer;display:grid;place-items:center" style-hover="background:#16191E"><svg width="14" height="14" sc-camel-view-box="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3L5 8l5 5"></path></svg></button>
+                  <div style="flex:1;min-width:220px;display:flex;flex-direction:column;gap:3px">
+                    <div style="display:flex;align-items:center;gap:10px">
+                      <h2 style="margin:0;font-size:20px;font-weight:600;letter-spacing:-0.01em">Run #{{ detail.id }}</h2>
+                      <span style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:500;padding:2px 9px;border-radius:999px;background:{{ detailPillBg }};color:{{ detailColor }}"><span style="width:6px;height:6px;border-radius:50%;background:{{ detailColor }}"></span>{{ detailStatus }}</span>
+                    </div>
+                    <span style="color:#9AA1AC;font-size:13px">{{ detailMeta }}</span>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:10px">
+                    <span style="font-size:12.5px;color:#7A818C">Download</span>
+                    <div style="display:flex;border:1px solid #2A2F37;border-radius:8px;background:#121418;overflow:hidden">
+                      <button sc-camel-on-click="{{ exportCsv }}" title="Opens in Excel, Sheets, Numbers" style="height:32px;padding:0 12px;border:none;background:transparent;color:#E8EAED;font:inherit;font-size:13px;font-weight:500;cursor:pointer" style-hover="background:#1A1D22;color:#B9F35A">CSV</button>
+                      <span style="width:1px;background:#2A2F37"></span>
+                      <button sc-camel-on-click="{{ exportJson }}" title="One JSON array" style="height:32px;padding:0 12px;border:none;background:transparent;color:#E8EAED;font:inherit;font-size:13px;font-weight:500;cursor:pointer" style-hover="background:#1A1D22;color:#B9F35A">JSON</button>
+                      <span style="width:1px;background:#2A2F37"></span>
+                      <button sc-camel-on-click="{{ exportJsonl }}" title="One JSON object per line" style="height:32px;padding:0 12px;border:none;background:transparent;color:#E8EAED;font:inherit;font-size:13px;font-weight:500;cursor:pointer" style-hover="background:#1A1D22;color:#B9F35A">JSONL</button>
+                    </div>
+                  </div>
+                </div>
+
+                <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+                  <div style="position:relative;flex:1 1 260px;max-width:380px">
+                    <svg width="14" height="14" sc-camel-view-box="0 0 16 16" fill="none" stroke="#7A818C" stroke-width="1.7" stroke-linecap="round" style="position:absolute;left:12px;top:50%;transform:translateY(-50%)"><circle cx="7" cy="7" r="4.6"></circle><path d="M10.5 10.5L14 14"></path></svg>
+                    <input value="{{ q }}" sc-camel-on-change="{{ onQ }}" placeholder="Search {{ detail.items }} items" style="width:100%;box-sizing:border-box;background:#0E1013;border:1px solid #2A2F37;border-radius:8px;padding:8px 12px 8px 34px;color:#E8EAED;font:inherit;font-size:13.5px;outline:none" style-focus="border-color:#B9F35A">
+                  </div>
+                  <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+                    <span style="font-size:12.5px;color:#7A818C;margin-right:2px">Columns</span>
+                    <sc-for list="{{ colChips }}" as="ch" hint-placeholder-count="4">
+                      <button sc-camel-on-click="{{ ch.onClick }}" style="display:flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;border:1px solid {{ ch.border }};background:transparent;color:{{ ch.fg }};font:inherit;font-family:'Geist Mono',monospace;font-size:12px;cursor:pointer" style-hover="border-color:#4A515C">
+                        <span style="width:6px;height:6px;border-radius:50%;background:{{ ch.dot }}"></span>{{ ch.label }}
+                      </button>
+                    </sc-for>
+                  </div>
+                  <span style="margin-left:auto;font-size:12.5px;color:#9AA1AC">{{ matchText }}</span>
+                </div>
+
+                <div style="display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap">
+                  <div style="flex:1 1 560px;min-width:0;background:#121418;border:1px solid #20242B;border-radius:12px;overflow:hidden;display:flex;flex-direction:column">
+                    <sc-if value="{{ hasMatches }}" hint-placeholder-val="{{ true }}">
+                      <div style="overflow-x:auto">
+                        <sc-raw-table style="width:100%;min-width:820px;border-collapse:collapse;font-size:13.5px;table-layout:fixed">
+                          <sc-raw-thead><sc-raw-tr>
+                            <sc-raw-th style="width:48px;text-align:right;padding:11px 12px 11px 16px;color:#5F6670;font-weight:500;font-size:12px;border-bottom:1px solid #1D2026;background:#101216">#</sc-raw-th>
+                            <sc-for list="{{ headCols }}" as="col" hint-placeholder-count="4"><sc-raw-th style="width:{{ col.w }};text-align:{{ col.align }};padding:11px 16px;color:#9AA1AC;font-weight:500;font-size:12px;font-family:'Geist Mono',monospace;border-bottom:1px solid #1D2026;background:#101216;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ col.label }}</sc-raw-th></sc-for>
+                          </sc-raw-tr></sc-raw-thead>
+                          <sc-raw-tbody>
+                            <sc-for list="{{ pageRows }}" as="row" hint-placeholder-count="8">
+                              <sc-raw-tr sc-camel-on-click="{{ row.onClick }}" style="cursor:pointer;background:{{ row.bg }};box-shadow:{{ row.shadow }}" style-hover="background:#171A1F">
+                                <sc-raw-td style="padding:0 12px 0 16px;height:44px;text-align:right;color:#5F6670;border-bottom:1px solid #1A1D22;font-variant-numeric:tabular-nums;font-size:12.5px">{{ row.n }}</sc-raw-td>
+                                <sc-for list="{{ row.cells }}" as="cell" hint-placeholder-count="4">
+                                  <sc-raw-td style="padding:0 16px;height:44px;border-bottom:1px solid #1A1D22;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;text-align:{{ cell.align }}">
+                                    <sc-if value="{{ cell.isPrimary }}" hint-placeholder-val="{{ false }}"><span title="{{ cell.v }}" style="font-weight:500;color:#E8EAED">{{ cell.v }}</span></sc-if>
+                                    <sc-if value="{{ cell.isText }}" hint-placeholder-val="{{ true }}"><span title="{{ cell.v }}" style="color:#C9CDD3">{{ cell.v }}</span></sc-if>
+                                    <sc-if value="{{ cell.isNum }}" hint-placeholder-val="{{ false }}"><span style="font-family:'Geist Mono',monospace;font-size:13px;color:#E8EAED;font-variant-numeric:tabular-nums">{{ cell.v }}</span></sc-if>
+                                    <sc-if value="{{ cell.isPill }}" hint-placeholder-val="{{ false }}"><span style="display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:500;padding:2px 9px;border-radius:999px;background:{{ cell.pillBg }};color:{{ cell.pillFg }}"><span style="width:5px;height:5px;border-radius:50%;background:{{ cell.pillFg }}"></span>{{ cell.v }}</span></sc-if>
+                                    <sc-if value="{{ cell.isUrl }}" hint-placeholder-val="{{ false }}"><span title="{{ cell.v }}" style="display:inline-flex;align-items:center;gap:7px;max-width:100%;color:#9AA1AC;font-family:'Geist Mono',monospace;font-size:12.5px"><svg width="12" height="12" sc-camel-view-box="0 0 16 16" fill="none" stroke="#7DD3FC" stroke-width="1.7" stroke-linecap="round" style="flex:none"><path d="M6.5 9.5l3-3M7 4.5l1.2-1.2a2.8 2.8 0 0 1 4 4L11 8.5M9 11.5l-1.2 1.2a2.8 2.8 0 0 1-4-4L5 7.5"></path></svg><span style="overflow:hidden;text-overflow:ellipsis">{{ cell.short }}</span></span></sc-if>
+                                  </sc-raw-td>
+                                </sc-for>
+                              </sc-raw-tr>
+                            </sc-for>
+                          </sc-raw-tbody>
+                        </sc-raw-table>
+                      </div>
+                      <div style="display:flex;align-items:center;gap:10px;padding:10px 16px;font-size:12.5px;color:#9AA1AC">
+                        <span style="flex:1">{{ rangeText }}</span>
+                        <button sc-camel-on-click="{{ prevPage }}" aria-label="Previous page" style="width:30px;height:30px;border-radius:7px;border:1px solid #2A2F37;background:transparent;color:{{ prevFg }};cursor:pointer;display:grid;place-items:center" style-hover="background:#16191E"><svg width="12" height="12" sc-camel-view-box="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3L5 8l5 5"></path></svg></button>
+                        <span style="font-variant-numeric:tabular-nums">{{ pageText }}</span>
+                        <button sc-camel-on-click="{{ nextPage }}" aria-label="Next page" style="width:30px;height:30px;border-radius:7px;border:1px solid #2A2F37;background:transparent;color:{{ nextFg }};cursor:pointer;display:grid;place-items:center" style-hover="background:#16191E"><svg width="12" height="12" sc-camel-view-box="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3l5 5-5 5"></path></svg></button>
+                      </div>
+                    </sc-if>
+                    <sc-if value="{{ noMatches }}" hint-placeholder-val="{{ false }}">
+                      <div style="padding:56px 24px;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center">
+                        <span style="font-weight:600">No items match “{{ q }}”</span>
+                        <button sc-camel-on-click="{{ clearQ }}" style="height:32px;padding:0 14px;border-radius:8px;border:1px solid #2A2F37;background:transparent;color:#E8EAED;font:inherit;font-size:13px;cursor:pointer" style-hover="border-color:#B9F35A">Clear search</button>
+                      </div>
+                    </sc-if>
+                  </div>
+
+                  <sc-if value="{{ hasInspect }}" hint-placeholder-val="{{ false }}">
+                    <aside style="flex:0 1 340px;min-width:280px;position:sticky;top:28px;background:#121418;border:1px solid #20242B;border-radius:12px;display:flex;flex-direction:column;overflow:hidden">
+                      <div style="display:flex;align-items:center;gap:6px;padding:12px 12px 12px 18px;border-bottom:1px solid #1D2026">
+                        <span style="flex:1;font-weight:600">Item {{ inspectN }}</span>
+                        <button sc-camel-on-click="{{ inspPrev }}" aria-label="Previous item" style="width:28px;height:28px;border-radius:6px;border:none;background:transparent;color:#9AA1AC;cursor:pointer;display:grid;place-items:center" style-hover="background:#1D2026;color:#E8EAED"><svg width="12" height="12" sc-camel-view-box="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10l5-5 5 5"></path></svg></button>
+                        <button sc-camel-on-click="{{ inspNext }}" aria-label="Next item" style="width:28px;height:28px;border-radius:6px;border:none;background:transparent;color:#9AA1AC;cursor:pointer;display:grid;place-items:center" style-hover="background:#1D2026;color:#E8EAED"><svg width="12" height="12" sc-camel-view-box="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6l5 5 5-5"></path></svg></button>
+                        <button sc-camel-on-click="{{ closeInspect }}" aria-label="Close" style="width:28px;height:28px;border-radius:6px;border:none;background:transparent;color:#9AA1AC;cursor:pointer;display:grid;place-items:center" style-hover="background:#1D2026;color:#E8EAED"><svg width="11" height="11" sc-camel-view-box="0 0 12 12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M3 3l6 6M9 3l-6 6"></path></svg></button>
+                      </div>
+                      <div style="display:flex;flex-direction:column">
+                        <sc-for list="{{ inspectFields }}" as="fld" hint-placeholder-count="4">
+                          <div style="display:flex;flex-direction:column;gap:4px;padding:12px 18px;border-bottom:1px solid #1A1D22">
+                            <div style="display:flex;align-items:center;gap:8px">
+                              <span style="flex:1;font-family:'Geist Mono',monospace;font-size:12px;color:#7A818C">{{ fld.k }}</span>
+                              <button sc-camel-on-click="{{ fld.copy }}" style="padding:2px 8px;border-radius:5px;border:none;background:transparent;color:#7A818C;font:inherit;font-size:12px;cursor:pointer" style-hover="background:#1D2026;color:#E8EAED">Copy</button>
+                            </div>
+                            <span style="color:#E8EAED;word-break:break-word;font-size:13.5px">{{ fld.v }}</span>
+                          </div>
+                        </sc-for>
+                      </div>
+                      <div style="display:flex;gap:8px;padding:14px 18px">
+                        <sc-if value="{{ inspectUrl }}" hint-placeholder-val="{{ false }}">
+                          <a href="{{ inspectUrl }}" target="_blank" rel="noopener" style="flex:1;height:34px;border-radius:8px;background:#B9F35A;color:#0B0C0E;font-weight:600;display:flex;align-items:center;justify-content:center;gap:6px;text-decoration:none">Open page ↗</a>
+                        </sc-if>
+                        <button sc-camel-on-click="{{ copyRecord }}" style="flex:1;height:34px;border-radius:8px;border:1px solid #2A2F37;background:transparent;color:#E8EAED;font:inherit;font-weight:500;cursor:pointer" style-hover="border-color:#B9F35A">Copy as JSON</button>
+                      </div>
+                    </aside>
+                  </sc-if>
+                </div>
+              </div>
+            </sc-if>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ onYaml }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:28px 32px 64px;max-width:900px;display:flex;flex-direction:column;gap:12px">
+            <div style="display:flex;align-items:center;gap:12px">
+              <div style="flex:1;display:flex;flex-direction:column;gap:2px">
+                <h2 style="margin:0;font-size:16px;font-weight:600">Template YAML</h2>
+                <span style="color:#9AA1AC">Generated live from the Configure tab. Copy it into <code style="font-family:'Geist Mono',monospace;font-size:12.5px">crawler/templates/{{ fileName }}.yaml</code> if you prefer files.</span>
+              </div>
+              <button sc-camel-on-click="{{ copyYaml }}" style="height:34px;padding:0 14px;border-radius:8px;border:1px solid #2A2F37;background:#121418;color:#E8EAED;font:inherit;font-weight:500;cursor:pointer" style-hover="border-color:#B9F35A">{{ copyLabel }}</button>
+            </div>
+            <pre style="margin:0;background:#08090B;border:1px solid #20242B;border-radius:12px;padding:18px 20px;font-family:'Geist Mono',monospace;font-size:13px;line-height:1.7;color:#C9CDD3;overflow:auto;white-space:pre">{{ yaml }}</pre>
+          </div>
+        </sc-if>
+      </div>
+    </main>
+  </div>
+
+  <sc-if value="{{ helpOpen }}" hint-placeholder-val="{{ false }}">
+    <div sc-camel-on-click="{{ closeHelp }}" style="position:fixed;inset:0;background:rgba(5,6,8,.6);z-index:20"></div>
+    <div style="position:fixed;top:0;right:0;bottom:0;width:440px;max-width:100%;background:#111317;border-left:1px solid #23272E;z-index:21;display:flex;flex-direction:column">
+      <div style="display:flex;align-items:center;padding:18px 22px;border-bottom:1px solid #1D2026">
+        <span style="flex:1;font-weight:600;font-size:16px">Guide</span>
+        <button sc-camel-on-click="{{ closeHelp }}" aria-label="Close" style="width:30px;height:30px;border-radius:7px;border:none;background:transparent;color:#9AA1AC;cursor:pointer;display:grid;place-items:center" style-hover="background:#1D2026;color:#E8EAED"><svg width="13" height="13" sc-camel-view-box="0 0 12 12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M3 3l6 6M9 3l-6 6"></path></svg></button>
+      </div>
+      <div style="flex:1;overflow:auto;padding:22px;display:flex;flex-direction:column;gap:26px">
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <span style="font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:#7A818C">Three steps</span>
+          <div style="display:flex;gap:12px"><span style="width:22px;height:22px;border-radius:50%;background:#B9F35A;color:#0B0C0E;font-size:12px;font-weight:700;display:grid;place-items:center;flex:none">1</span><div><b style="font-weight:600">Point it at a page.</b> <span style="color:#9AA1AC">Name your crawler and paste the address where your data lives. Open “books” in the sidebar for a working example.</span></div></div>
+          <div style="display:flex;gap:12px"><span style="width:22px;height:22px;border-radius:50%;background:#B9F35A;color:#0B0C0E;font-size:12px;font-weight:700;display:grid;place-items:center;flex:none">2</span><div><b style="font-weight:600">Say what to collect.</b> <span style="color:#9AA1AC">Add fields with CSS selectors, or describe it in plain words and let AI do it. Use “Test on the first page” to check.</span></div></div>
+          <div style="display:flex;gap:12px"><span style="width:22px;height:22px;border-radius:50%;background:#B9F35A;color:#0B0C0E;font-size:12px;font-weight:700;display:grid;place-items:center;flex:none">3</span><div><b style="font-weight:600">Run it.</b> <span style="color:#9AA1AC">Watch progress live in the Runs tab, then open the run to view and export your data.</span></div></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <span style="font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:#7A818C">Finding a CSS selector</span>
+          <ol style="margin:0;padding-left:20px;display:flex;flex-direction:column;gap:8px;color:#C9CDD3">
+            <li>Open the page in Chrome or Firefox.</li>
+            <li>Right-click the thing you want (a title, a price) → <b style="font-weight:600;color:#E8EAED">Inspect</b>.</li>
+            <li>In the highlighted HTML, note the tag and class. <code style="font-family:'Geist Mono',monospace;font-size:12.5px;color:#B9F35A">&lt;h2 class="title"&gt;</code> becomes <code style="font-family:'Geist Mono',monospace;font-size:12.5px;color:#B9F35A">h2.title</code></li>
+            <li>Choose what to save: the text, the link URL, or another attribute.</li>
+          </ol>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <span style="font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:#7A818C">Common patterns</span>
+          <div style="border:1px solid #23272E;border-radius:10px;overflow:hidden;font-size:13px">
+            <div style="display:grid;grid-template-columns:1fr 1fr;padding:9px 12px;border-bottom:1px solid #1D2026"><code style="font-family:'Geist Mono',monospace;color:#B9F35A">.price</code><span style="color:#9AA1AC">anything with class “price”</span></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;padding:9px 12px;border-bottom:1px solid #1D2026"><code style="font-family:'Geist Mono',monospace;color:#B9F35A">a.item</code><span style="color:#9AA1AC">links with class “item”</span></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;padding:9px 12px;border-bottom:1px solid #1D2026"><code style="font-family:'Geist Mono',monospace;color:#B9F35A">h3 a</code><span style="color:#9AA1AC">a link inside an h3</span></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;padding:9px 12px"><code style="font-family:'Geist Mono',monospace;color:#B9F35A">span[itemprop=name]</code><span style="color:#9AA1AC">by attribute value</span></div>
+          </div>
+          <span style="font-size:12.5px;color:#7A818C">The <b style="color:#C9CDD3;font-weight:600">repeating block</b> wraps one whole result, e.g. <code style="font-family:'Geist Mono',monospace">article.product</code>. Field selectors are then looked up inside it.</span>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ confirmOpen }}" hint-placeholder-val="{{ false }}">
+    <div sc-camel-on-click="{{ cancelDelete }}" style="position:fixed;inset:0;background:rgba(5,6,8,.65);z-index:40"></div>
+    <div role="dialog" aria-modal="true" style="position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:420px;max-width:calc(100% - 32px);background:#121418;border:1px solid #2A2F37;border-radius:14px;z-index:41;padding:22px;display:flex;flex-direction:column;gap:16px;box-shadow:0 20px 60px rgba(0,0,0,.6)">
+      <div style="display:flex;gap:14px;align-items:flex-start">
+        <span style="width:36px;height:36px;border-radius:10px;background:#2A1416;display:grid;place-items:center;flex:none">
+          <svg width="16" height="16" sc-camel-view-box="0 0 16 16" fill="none" stroke="#F87171" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 4.2h11M6.3 4.2V2.8h3.4v1.4M4 4.2l.7 9h6.6l.7-9M6.7 7v4M9.3 7v4"></path></svg>
+        </span>
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <span style="font-weight:600;font-size:16px">Delete “{{ deleteName }}”?</span>
+          <span style="color:#9AA1AC">{{ deleteDetail }}</span>
+        </div>
+      </div>
+      <label style="display:flex;align-items:center;gap:10px;font-size:13px;color:#C9CDD3;cursor:pointer">
+        <input type="checkbox" checked="{{ keepData }}" sc-camel-on-change="{{ toggleKeepData }}" style="accent-color:#B9F35A;width:15px;height:15px">
+        Keep downloaded run data on disk
+      </label>
+      <div style="display:flex;justify-content:flex-end;gap:8px">
+        <button sc-camel-on-click="{{ cancelDelete }}" style="height:36px;padding:0 14px;border-radius:8px;border:1px solid #2A2F37;background:transparent;color:#E8EAED;font:inherit;font-weight:500;cursor:pointer" style-hover="background:#181B20">Cancel</button>
+        <button sc-camel-on-click="{{ confirmDelete }}" style="height:36px;padding:0 14px;border-radius:8px;border:none;background:#E5484D;color:#FFFFFF;font:inherit;font-weight:600;cursor:pointer" style-hover="background:#F05A5F">Delete crawler</button>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ undoOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#E8EAED;color:#0B0C0E;padding:8px 8px 8px 16px;border-radius:9px;font-weight:500;z-index:31;box-shadow:0 8px 30px rgba(0,0,0,.5);display:flex;align-items:center;gap:14px">
+      Deleted “{{ undoName }}”
+      <button sc-camel-on-click="{{ undoDelete }}" style="height:28px;padding:0 12px;border-radius:6px;border:none;background:#0B0C0E;color:#B9F35A;font:inherit;font-size:13px;font-weight:600;cursor:pointer">Undo</button>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ toast }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#E8EAED;color:#0B0C0E;padding:10px 16px;border-radius:9px;font-weight:500;z-index:30;box-shadow:0 8px 30px rgba(0,0,0,.5)">{{ toast }}</div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script="" data-props="{&quot;guidance&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Beginner&quot;,&quot;Expert&quot;],&quot;default&quot;:&quot;Beginner&quot;,&quot;tsType&quot;:&quot;'Beginner'|'Expert'&quot;,&quot;section&quot;:&quot;Experience&quot;},&quot;sidebarDetail&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Experience&quot;},&quot;fastSchedules&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Prototype&quot;}}">
+const ACC = '#B9F35A';
+const SPEEDS = { gentle:{rps:0.5,workers:2,l:'Gentle'}, normal:{rps:1,workers:4,l:'Normal'}, fast:{rps:3,workers:8,l:'Fast'} };
+const STEALTH = [
+  {id:'light',title:'Light',desc:'Plain requests. Fastest, easiest to block.',tier:'http'},
+  {id:'auto',title:'Auto',desc:'Starts light, switches to a real browser if blocked.',tier:'auto',rec:true},
+  {id:'max',title:'Maximum',desc:'Real browser from the start. Slowest.',tier:'patchright'},
+];
+const tierToStealth = t => t === 'http' ? 'light' : t === 'auto' ? 'auto' : 'max';
+const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const host = u => { try { return new URL(u).hostname } catch(e) { return '' } };
+const validUrl = u => { try { const x = new URL(u); return /^https?:$/.test(x.protocol) && x.hostname.includes('.') } catch(e) { return false } };
+const pad = n => String(n).padStart(2,'0');
+const fmtElapsed = ms => { const s = Math.max(0, Math.floor(ms/1000)); return `${Math.floor(s/60)}:${pad(s%60)}` };
+const browserTz = () => { try { return Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC' } catch(e) { return 'UTC' } };
+const hm = d => `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+const sameDay = (a, b) => a.toDateString() === b.toDateString();
+const when = ts => {
+  const d = new Date(ts * 1000), n = new Date();
+  if (sameDay(d, n)) return `Today, ${hm(d)}`;
+  if (sameDay(d, new Date(n - 864e5))) return `Yesterday, ${hm(d)}`;
+  return `${d.toLocaleDateString(undefined, {month:'short', day:'numeric'})}, ${hm(d)}`;
+};
+const shortWhen = ts => {
+  const d = new Date(ts * 1000), n = new Date();
+  if (sameDay(d, n)) return `today ${hm(d)}`;
+  if (sameDay(d, new Date(n - 864e5))) return `yesterday ${hm(d)}`;
+  return d.toLocaleDateString(undefined, {month:'short', day:'numeric'});
+};
+const cellVal = v => v == null || v === '' ? '—' : Array.isArray(v) ? v.join(', ') : typeof v === 'object' ? JSON.stringify(v) : String(v);
+
+async function api(path, opts) {
+  const r = await fetch(path, opts);
+  let j = null;
+  try { j = await r.json(); } catch(e) {}
+  if (!r.ok) throw new Error((j && j.error) || `Request failed (${r.status})`);
+  return j;
+}
+const post = (path, body) => api(path, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)});
+
+const blankField = () => ({name:'', selector:'', get:'text', attr:'', rest:{}});
+
+// "h3 a::attr(title)" <-> {selector:'h3 a', get:'attr', attr:'title'}
+function parseField(f) {
+  const {name, css, ...rest} = f;
+  let selector = css || '', get = 'text', attr = '', m;
+  if ((m = selector.match(/^(.*?)\s*::attr\(([^)]*)\)\s*$/))) {
+    selector = m[1];
+    if (m[2] === 'href') get = 'link'; else { get = 'attr'; attr = m[2]; }
+  } else if ((m = selector.match(/^(.*?)\s*::text\s*$/))) {
+    selector = m[1];
+  } else if (rest.attr) {
+    get = rest.attr === 'href' ? 'link' : 'attr'; attr = rest.attr === 'href' ? '' : rest.attr;
+  }
+  delete rest.attr;
+  return {name, selector, get, attr, rest};
+}
+function buildField(f) {
+  const sel = f.selector.trim();
+  const css = !sel ? '' : f.get === 'link' ? `${sel}::attr(href)` : f.get === 'attr' ? `${sel}::attr(${f.attr || 'title'})` : `${sel}::text`;
+  return {...f.rest, name:f.name.trim(), css};
+}
+
+function parseSchedule(form) {
+  const every = (form.schedule_every || '').trim().toLowerCase(), at = form.schedule_at || '';
+  const sc = {on:false, freq:'daily', time:'03:00', day:'Mon', raw:{every:'', at:''}};
+  if (!every) return sc;
+  sc.on = true;
+  let m;
+  if (every === '1h') sc.freq = 'hourly';
+  else if (every === '1d') { sc.freq = 'daily'; sc.time = at || '03:00'; }
+  else if ((m = every.match(/^cron:\s*(\d+)\s+(\d+)\s+\*\s+\*\s+([a-z]{3})[a-z]*$/))) {
+    sc.freq = 'weekly'; sc.time = `${pad(m[2])}:${pad(m[1])}`; sc.day = m[3][0].toUpperCase() + m[3].slice(1);
+  } else { sc.freq = 'custom'; sc.raw = {every:form.schedule_every, at}; }
+  return sc;
+}
+
+class Component extends DCLogic {
+  state = {
+    crawlers:[this.blank('boot')], sel:'boot', loaded:false, tab:'configure', urlDraft:'', urlErr:'', touched:{}, attempted:false,
+    test:'idle', testData:null, testMsg:'', live:{}, openRun:null, help:false, dirty:{}, toast:null, custom:false, copied:false,
+    schedOn:true, nextAt:{}, now:Date.now(), runs:[], rows:{}, yamlText:{},
+  };
+  logRef = React.createRef();
+  pollN = 0;
+
+  blank(id) {
+    return { id, name:'', saved:false, urls:[], mode:'css', item:'', fields:[blankField()], description:'',
+      follow:{on:false, next:'', max:5}, stealth:'auto', rawTier:'', speed:'normal', rps:1, workers:4, robots:true, captcha:'skip',
+      schedule:{on:false, freq:'daily', time:'03:00', day:'Mon', raw:{every:'', at:''}}, tz:'', raw:{} };
+  }
+  fromTemplate(d) {
+    const f = d.form;
+    if (!f) return null;
+    const speed = Object.keys(SPEEDS).find(k => SPEEDS[k].rps === f.rate_limit_per_sec && SPEEDS[k].workers === f.concurrency) || 'custom';
+    return { id:d.name, name:f.name, saved:true, urls:[...f.start_urls], mode:f.extract_mode === 'llm' ? 'ai' : 'css',
+      item:f.item_selector, fields:f.fields.length ? f.fields.map(parseField) : [blankField()], description:f.llm_description,
+      follow:{on:!!(f.paginate || f.link_selector), next:f.paginate, max:f.max_pages},
+      stealth:tierToStealth(f.min_tier), rawTier:f.min_tier, speed, rps:f.rate_limit_per_sec, workers:f.concurrency,
+      robots:f.respect_robots, captcha:f.captcha, schedule:parseSchedule(f), tz:f.schedule_timezone,
+      raw:{link_selector:f.link_selector, max_depth:f.max_depth, deny_patterns:f.deny_patterns, base:d.base} };
+  }
+  toForm(c) {
+    const sc = c.schedule, raw = c.raw || {};
+    let every = '', at = '';
+    if (sc.on) {
+      if (sc.freq === 'hourly') every = '1h';
+      else if (sc.freq === 'daily') { every = '1d'; at = sc.time; }
+      else if (sc.freq === 'weekly') { const [hh, mm] = sc.time.split(':').map(Number); every = `cron:${mm} ${hh} * * ${sc.day.toLowerCase()}`; }
+      else { every = sc.raw.every; at = sc.raw.at; }
+    }
+    const tier = c.rawTier && tierToStealth(c.rawTier) === c.stealth ? c.rawTier : STEALTH.find(o => o.id === c.stealth).tier;
+    return {
+      name:c.name, start_urls:c.urls, extract_mode:c.mode === 'ai' ? 'llm' : 'selectors', item_selector:c.item,
+      fields:c.fields.map(buildField).filter(f => f.name && f.css), llm_description:c.description,
+      link_selector:c.follow.on ? (raw.link_selector || '') : '', paginate:c.follow.on ? c.follow.next : '',
+      max_depth:raw.max_depth || 1, max_pages:c.follow.on ? c.follow.max : Math.max(1, c.urls.length),
+      min_tier:tier, rate_limit_per_sec:c.rps, concurrency:c.workers, respect_robots:c.robots, captcha:c.captcha,
+      deny_patterns:raw.deny_patterns || [], schedule_every:every, schedule_at:at, schedule_timezone:c.tz || browserTz(),
+      base:raw.base || {},
+    };
+  }
+
+  componentDidMount() {
+    this.clock = setInterval(() => this.setState({now:Date.now()}), 1000);
+    this.poller = setInterval(() => this.poll(), 1500);
+    this.load();
+  }
+  componentWillUnmount() { clearInterval(this.clock); clearInterval(this.poller); clearTimeout(this.toastT); clearTimeout(this.undoT); clearTimeout(this.yamlT); }
+  componentDidUpdate() {
+    const el = this.logRef.current, r = this.state.live[this.state.sel], n = r ? r.lines.length : 0;
+    if (el && n !== this.lastLines) el.scrollTop = el.scrollHeight;
+    this.lastLines = n;
+  }
+
+  async load() {
+    try {
+      const list = await api('/api/templates');
+      const found = await Promise.all(list.map(t => api('/api/templates/' + encodeURIComponent(t.name)).then(d => this.fromTemplate(d)).catch(() => null)));
+      const crawlers = found.filter(Boolean);
+      const first = crawlers[0] || this.blank('new-' + Date.now());
+      this.setState({crawlers:crawlers.length ? crawlers : [first], sel:first.id, loaded:true, dirty:crawlers.length ? {} : {[first.id]:true}});
+      this.refreshYaml();
+      this.loadRuns().catch(() => {});
+      this.pollSched();
+      this.poll();
+    } catch(e) {
+      this.setState({loaded:true});
+      this.flash('Could not reach the crawler server');
+    }
+  }
+  async loadRuns() {
+    const list = await api('/api/runs?limit=200');
+    const act = this.activeIds || {};
+    const runs = list.map(r => ({
+      id:r.id, crawler:r.site, trigger:r.trigger || 'manual',
+      status:r.status === 'running' && act[r.id] !== true ? 'stopped' : r.status,
+      pages:r.pages_fetched, items:r.records_new, started:when(r.started_at), startedAt:r.started_at,
+      duration:r.finished_at ? fmtElapsed((r.finished_at - r.started_at) * 1000) : '—',
+    }));
+    this.setState(s => {
+      const live = {...s.live};
+      list.forEach(r => { const l = live[r.site]; if (l && l.runId === r.id && l.status === 'running') live[r.site] = {...l, pages:r.pages_fetched, items:r.records_new}; });
+      return {runs:runs.filter(r => r.status !== 'running'), live};
+    });
+  }
+
+  cur() { return this.state.crawlers.find(c => c.id === this.state.sel) }
+  upd(patch) {
+    this.setState(s => ({
+      crawlers: s.crawlers.map(c => c.id === s.sel ? {...c, ...(typeof patch === 'function' ? patch(c) : patch)} : c),
+      dirty: {...s.dirty, [s.sel]: true}, test:'idle',
+    }), () => this.refreshYaml());
+  }
+  flash(msg) { clearTimeout(this.toastT); this.setState({toast:msg}); this.toastT = setTimeout(() => this.setState({toast:null}), 2600); }
+  select(id) {
+    this.setState({sel:id, tab:'configure', touched:{}, attempted:false, urlDraft:'', urlErr:'', test:'idle', openRun:null}, () => this.refreshYaml());
+  }
+  newCrawler() {
+    const c = this.blank('new-' + Date.now());
+    this.setState(s => ({crawlers:[...s.crawlers, c], dirty:{...s.dirty, [c.id]:true}}), () => this.select(c.id));
+  }
+  addUrl() {
+    const parts = this.state.urlDraft.split(/[\s,]+/).filter(Boolean);
+    if (!parts.length) return;
+    const bad = parts.filter(p => !validUrl(p)), good = parts.filter(validUrl);
+    if (good.length) this.upd(c => ({urls:[...new Set([...c.urls, ...good])]}));
+    this.setState({urlDraft: bad.join(' '), urlErr: bad.length ? `“${bad[0]}” isn't a full web address. Start it with https://` : ''});
+  }
+  checks(c) {
+    const nameOk = /^[a-z0-9][a-z0-9-]*$/.test(c.name);
+    const urlsOk = c.urls.length > 0;
+    const extractOk = c.mode === 'css' ? c.fields.some(f => f.name.trim() && f.selector.trim()) : c.description.trim().length > 0;
+    return { nameOk, urlsOk, extractOk, list:[
+      {label:'Name', ok:nameOk, hint:c.name ? 'Use lowercase letters, numbers and dashes' : 'Give your crawler a short name'},
+      {label:'Start page', ok:urlsOk, hint:'Add at least one web address'},
+      {label:c.mode === 'css' ? 'Fields to collect' : 'Description for the AI', ok:extractOk, hint:c.mode === 'css' ? 'At least one field with a selector' : 'Describe what to save from each page'},
+    ]};
+  }
+
+  // ---- YAML preview (server-rendered so it matches what is saved) ---- //
+  refreshYaml() {
+    clearTimeout(this.yamlT);
+    this.yamlT = setTimeout(async () => {
+      const c = this.cur();
+      if (!c) return;
+      try {
+        const r = await post('/api/compose', this.toForm(c));
+        this.setState(s => ({yamlText:{...s.yamlText, [c.id]: r.ok ? r.yaml : `# Not valid yet: ${r.error}`}}));
+      } catch(e) {}
+    }, 300);
+  }
+
+  // ---- Persistence ---- //
+  async persist(c) {
+    if (!c.saved && this.state.crawlers.some(x => x.saved && x.id === c.name)) {
+      this.flash(`A crawler named “${c.name}” already exists`);
+      return null;
+    }
+    try {
+      const r = await post('/api/templates', {form:this.toForm(c)});
+      this.setState(s => ({
+        crawlers: s.crawlers.map(x => x.id === c.id ? {...x, id:r.name, name:r.name, saved:true} : x),
+        sel: s.sel === c.id ? r.name : s.sel,
+        dirty: {...s.dirty, [c.id]:false, [r.name]:false},
+      }));
+      return r.name;
+    } catch(e) {
+      this.flash(e.message);
+      return null;
+    }
+  }
+  async save() {
+    const c = this.cur(), bad = this.checks(c).list.filter(x => !x.ok).length;
+    if (bad) { this.setState({attempted:true}); this.flash(`Fix ${bad} thing${bad > 1 ? 's' : ''} before saving`); return; }
+    if (await this.persist(c)) this.flash('Saved');
+  }
+
+  // ---- Running ---- //
+  async startRun() {
+    const c = this.cur(), bad = this.checks(c).list.filter(x => !x.ok).length;
+    if (bad) { this.setState({attempted:true, tab:'configure'}); this.flash(`Fix ${bad} thing${bad > 1 ? 's' : ''} before running`); return; }
+    const l = this.state.live[c.id];
+    this.setState({tab:'runs', openRun:null});
+    if (l && l.status === 'running') return;
+    const name = await this.persist(c);
+    if (!name) return;
+    try {
+      await post('/api/crawl', {name, captcha:c.captcha});
+    } catch(e) { this.flash(e.message); return; }
+    this.poll();
+  }
+  async stopRun() {
+    const c = this.cur();
+    try {
+      await post('/api/stop', {name:c.id});
+      this.setState(s => ({live:{...s.live, [c.id]:{...s.live[c.id], stopping:true}}}));
+      this.flash('Stopping after the current page…');
+    } catch(e) { this.flash(e.message); }
+  }
+  async poll() {
+    if (this.polling) return;
+    this.polling = true;
+    try {
+      const st = await api('/api/status');
+      const finished = this.applyStatus(st);
+      if (++this.pollN % 3 === 0) this.pollSched();
+      const running = Object.values(this.state.live).some(r => r.status === 'running');
+      if (running || finished.length) await this.loadRuns();
+      await this.pollLogs();
+      finished.forEach(n => {
+        const r = this.state.live[n], c = this.state.crawlers.find(x => x.id === n);
+        if (r && r.trigger === 'schedule' && c) this.flash(`Scheduled run ${r.status === 'completed' ? 'finished' : r.status} · ${c.name}`);
+      });
+    } catch(e) {} finally { this.polling = false; }
+  }
+  applyStatus(st) {
+    const snap = this.state.live, ups = [], finished = [];
+    this.activeIds = {};
+    Object.entries(st).forEach(([name, a]) => {
+      const r = snap[name];
+      if (a.status === 'running') {
+        if (a.run_id) this.activeIds[a.run_id] = true;
+        if (!r || r.status !== 'running') {
+          const t0 = a.started_at || Date.now() / 1000;
+          ups.push([name, () => ({crawler:name, trigger:a.trigger || 'manual', status:'running', lines:[], pages:0, items:0, errors:0, start:t0 * 1000, startedLabel:when(t0), seq:0, runId:a.run_id})]);
+        } else if (a.run_id && r.runId !== a.run_id) {
+          ups.push([name, prev => ({...prev, runId:a.run_id})]);
+        }
+      } else if (r && r.status === 'running') {
+        finished.push(name);
+        ups.push([name, prev => ({...prev, status:a.status, runId:a.run_id || prev.runId, error:a.error, end:Date.now(), final:true,
+          pages:a.pages ?? prev.pages, items:a.records_new ?? prev.items})]);
+      }
+    });
+    if (ups.length) this.setState(s => { const live = {...s.live}; ups.forEach(([n, f]) => { live[n] = f(live[n]); }); return {live}; });
+    return finished;
+  }
+  async pollLogs() {
+    const live = this.state.live;
+    for (const [name, r] of Object.entries(live)) {
+      if (r.status !== 'running' && !r.final) continue;
+      const q = r.runId ? `run_id=${r.runId}` : `site=${encodeURIComponent(name)}`;
+      let j;
+      try { j = await api(`/api/logs?${q}&after=${r.seq}`); } catch(e) { continue; }
+      this.setState(s => {
+        const cur = s.live[name];
+        if (!cur) return null;
+        const lines = [...cur.lines];
+        let errors = cur.errors;
+        j.lines.forEach(l => {
+          const m = l.msg;
+          let t = l.level === 'ERROR' || l.level === 'CRITICAL' ? 'ERR' : l.level === 'WARNING' ? 'WARN' : 'INFO';
+          if (t === 'INFO') t = / -> \d+ records/.test(m) ? 'OK' : /^Run \d+ for .* (done|stopped)/.test(m) ? 'DONE' : 'INFO';
+          if (t === 'ERR') errors++;
+          lines.push({t, m, time:fmtElapsed(l.ts * 1000 - cur.start)});
+        });
+        if (cur.final && cur.error) { lines.push({t:'ERR', m:cur.error, time:fmtElapsed(cur.end - cur.start)}); errors++; }
+        return {live:{...s.live, [name]:{...cur, lines:lines.slice(-400), errors, seq:j.last, final:false}}};
+      });
+    }
+  }
+  async pollSched() {
+    try {
+      const j = await api('/api/scheduler');
+      this.setState({schedOn:j.enabled, nextAt:Object.fromEntries(Object.entries(j.next).map(([k, v]) => [k, v * 1000]))});
+    } catch(e) {}
+  }
+  async toggleScheduler() {
+    const on = !this.state.schedOn;
+    this.setState({schedOn:on});
+    try { await post('/api/scheduler', {enabled:on}); } catch(e) {}
+    this.flash(on ? 'Scheduler resumed' : 'Scheduler paused — no automatic runs');
+  }
+  everyMs(c) {
+    const sc = c.schedule;
+    if (sc.freq === 'hourly') return 3600000;
+    if (sc.freq === 'weekly') return 7 * 86400000;
+    if (sc.freq === 'custom') { const m = (sc.raw.every || '').match(/^(\d+)\s*([smhd])$/i); if (m) return +m[1] * {s:1e3, m:6e4, h:36e5, d:864e5}[m[2].toLowerCase()]; }
+    return 86400000;
+  }
+
+  // ---- Testing ---- //
+  async runTest() {
+    const c = this.cur(), k = this.checks(c);
+    if (!(k.urlsOk && k.extractOk)) { this.setState({test:'blocked', testMsg:'Add a start page and at least one field first.'}); return; }
+    this.setState({test:'loading'});
+    try {
+      const r = await post('/api/test', this.toForm(c));
+      if (r.ok) this.setState({test:'done', testData:r});
+      else this.setState({test:'blocked', testMsg:r.error || 'The test failed.'});
+    } catch(e) { this.setState({test:'blocked', testMsg:e.message}); }
+  }
+
+  // ---- Results ---- //
+  openRun(id) {
+    this.setState({openRun:id, q:'', pg:0, hidden:{}, inspect:null});
+    api('/api/runs/' + id).then(j => this.setState(s => ({rows:{...s.rows, [id]:j.records || []}}))).catch(() => this.flash('Could not load the results'));
+  }
+  colsOf(id) {
+    const cols = [];
+    (this.state.rows[id] || []).slice(0, 50).forEach(r => Object.keys(r).forEach(k => { if (k !== '_url' && !cols.includes(k)) cols.push(k); }));
+    return cols;
+  }
+  rowCells(id, cols) { return (this.state.rows[id] || []).map(r => cols.map(k => cellVal(r[k]))); }
+  download(c, d, fmt) {
+    const a = document.createElement('a');
+    a.href = `/api/runs/${d.id}/export?format=${fmt}`;
+    a.download = `${c.name}-run-${d.id}.${fmt}`;
+    a.click();
+    this.flash(`Downloading ${a.download}`);
+  }
+  copy(text, msg) { try { navigator.clipboard.writeText(text); } catch(e) {} this.flash(msg); }
+
+  // ---- Delete ---- //
+  async deleteCur() {
+    const s = this.state, c = s.crawlers.find(x => x.id === s.confirm) || this.cur();
+    if (c.saved) {
+      const l = s.live[c.id];
+      if (l && l.status === 'running') { try { await post('/api/stop', {name:c.id}); } catch(e) {} }
+      try {
+        await api(`/api/templates/${encodeURIComponent(c.id)}?purge=${s.keepData === false ? 1 : 0}`, {method:'DELETE'});
+      } catch(e) { this.setState({confirm:false}); this.flash(e.message); return; }
+    }
+    const idx = s.crawlers.findIndex(x => x.id === c.id);
+    const rest = s.crawlers.filter(x => x.id !== c.id);
+    const wasSel = c.id === s.sel;
+    clearTimeout(this.undoT);
+    this.setState({confirm:false, toast:null, crawlers:rest, undo:{crawler:c, idx, keepSel:!wasSel}});
+    if (wasSel) {
+      if (!rest.length) this.newCrawler(); else this.select(rest[Math.max(0, idx - 1)].id);
+    }
+    this.undoT = setTimeout(() => this.setState({undo:null}), 6000);
+    this.loadRuns().catch(() => {});
+  }
+  async undoDelete() {
+    const u = this.state.undo;
+    if (!u) return;
+    clearTimeout(this.undoT);
+    this.setState(s => { const list = [...s.crawlers]; list.splice(u.idx, 0, u.crawler); return {crawlers:list, undo:null}; }, async () => {
+      if (u.crawler.saved) await this.persist(u.crawler);
+      if (!u.keepSel) this.select(u.crawler.id);
+      this.loadRuns().catch(() => {});
+    });
+  }
+
+  seg(opts, val, set) { return opts.map(([v, l]) => ({label:l, bg:v === val ? '#23272E' : 'transparent', fg:v === val ? '#E8EAED' : '#9AA1AC', onClick:() => set(v)})); }
+  sw(on) { return [on ? ACC : '#2A2F37', on ? '18px' : '0px']; }
+  yaml(c) { return this.state.yamlText[c.id] || '# Loading…'; }
+
+  resultVals(c, d, cols, statusColor) {
+    if (!d) return {};
+    const s = this.state, PER = 20, ACCENT = '#B9F35A';
+    const all = this.rowCells(d.id, cols);
+    const first = all[0] || [];
+    let primaryDone = false;
+    const types = cols.map((k, i) => {
+      const v = String(first[i] || '');
+      if (/url|link|href/i.test(k) || /^https?:/.test(v)) return 'url';
+      if (/^[£$€]?\s?\d+([.,]\d+)?$/.test(v)) return 'num';
+      if (/availab|stock|status/i.test(k)) return 'pill';
+      if (!primaryDone) { primaryDone = true; return 'primary'; }
+      return 'text';
+    });
+    const hidden = s.hidden || {};
+    const vis = cols.map((_, i) => i).filter(i => !hidden[cols[i]]);
+    const q = (s.q || '').trim().toLowerCase();
+    const filtered = all.map((cells, i) => ({cells, i})).filter(r => !q || r.cells.some(v => String(v).toLowerCase().includes(q)));
+    const pages = Math.max(1, Math.ceil(filtered.length / PER));
+    const pg = Math.min(s.pg || 0, pages - 1);
+    const slice = filtered.slice(pg * PER, pg * PER + PER);
+    const widths = {url:'26%', num:'104px', pill:'128px', primary:'38%', text:'auto'};
+    const shortUrl = v => { try { const u = new URL(v); return u.pathname.replace(/\/index\.html$/, '').split('/').filter(Boolean).pop() || u.hostname; } catch(e) { return v; } };
+    const pill = v => /low|out/i.test(v) ? ['rgba(251,191,36,0.1)', '#FBBF24'] : ['rgba(185,243,90,0.09)', ACCENT];
+    const insIdx = s.inspect != null ? filtered.findIndex(r => r.i === s.inspect) : -1;
+    const ins = insIdx >= 0 ? filtered[insIdx] : null;
+    const urlIdx = types.indexOf('url');
+    const go = delta => { if (!filtered.length) return; const n = Math.max(0, Math.min(filtered.length - 1, insIdx + delta)); this.setState({inspect:filtered[n].i, pg:Math.floor(n / PER)}); };
+    const stLabel = {completed:'Completed', stopped:'Stopped', failed:'Failed'}[d.status] || d.status;
+    const stBg = {completed:'rgba(185,243,90,0.09)', stopped:'rgba(251,191,36,0.1)', failed:'rgba(248,113,113,0.1)'}[d.status];
+    return {
+      detailStatus: stLabel, detailColor: statusColor(d.status), detailPillBg: stBg,
+      detailMeta: `${c.name} · ${d.started} · took ${d.duration} · ${d.pages} page${d.pages === 1 ? '' : 's'} · ${d.items} new item${d.items === 1 ? '' : 's'}`,
+      exportCsv: () => this.download(c, d, 'csv'), exportJson: () => this.download(c, d, 'json'), exportJsonl: () => this.download(c, d, 'jsonl'),
+      q: s.q || '', onQ: e => this.setState({q:e.target.value, pg:0}), clearQ: () => this.setState({q:'', pg:0}),
+      colChips: cols.map(k => { const on = !hidden[k]; return {label:k, border:on ? '#3A4048' : '#23272E', fg:on ? '#E8EAED' : '#5F6670', dot:on ? ACCENT : '#3A3F47',
+        onClick:() => this.setState(x => { const h = {...(x.hidden || {})}; if (h[k]) delete h[k]; else if (vis.length > 1) h[k] = true; return {hidden:h}; })}; }),
+      matchText: q ? `${filtered.length} of ${all.length} match` : `${all.length} items`,
+      hasMatches: filtered.length > 0, noMatches: filtered.length === 0,
+      headCols: vis.map((i, n) => ({label:cols[i], w:n === vis.length - 1 ? 'auto' : widths[types[i]], align:types[i] === 'num' ? 'right' : 'left'})),
+      pageRows: slice.map(r => {
+        const sel = ins && ins.i === r.i;
+        return { n:r.i + 1, bg: sel ? '#1A1F16' : 'transparent', shadow: sel ? `inset 2px 0 0 ${ACCENT}` : 'none',
+          onClick:() => this.setState(x => ({inspect: x.inspect === r.i ? null : r.i})),
+          cells: vis.map(i => { const v = r.cells[i], t = types[i], [pb, pf] = pill(String(v));
+            return {v, short:t === 'url' ? shortUrl(v) : v, align:t === 'num' ? 'right' : 'left', pillBg:pb, pillFg:pf,
+              isUrl:t === 'url', isNum:t === 'num', isPill:t === 'pill', isPrimary:t === 'primary', isText:t === 'text'}; }) };
+      }),
+      rangeText: filtered.length ? `${pg * PER + 1}–${Math.min(filtered.length, pg * PER + PER)} of ${filtered.length}` : '',
+      pageText: `Page ${pg + 1} of ${pages}`,
+      prevPage: () => this.setState({pg:Math.max(0, pg - 1)}), nextPage: () => this.setState({pg:Math.min(pages - 1, pg + 1)}),
+      prevFg: pg > 0 ? '#E8EAED' : '#3A3F47', nextFg: pg < pages - 1 ? '#E8EAED' : '#3A3F47',
+      hasInspect: !!ins, inspectN: ins ? ins.i + 1 : '',
+      inspectFields: ins ? cols.map((k, i) => ({k, v:ins.cells[i], copy:() => this.copy(String(ins.cells[i]), `Copied ${k}`)})) : [],
+      inspectUrl: ins && urlIdx >= 0 ? ins.cells[urlIdx] : false,
+      inspPrev: () => go(-1), inspNext: () => go(1), closeInspect: () => this.setState({inspect:null}),
+      copyRecord: () => ins && this.copy(JSON.stringify(Object.fromEntries(cols.map((k, i) => [k, ins.cells[i]])), null, 2), 'Copied item as JSON'),
+    };
+  }
+
+  renderVals() {
+    const s = this.state, c = this.cur(), k = this.checks(c);
+    const nowT = s.now || Date.now();
+    const fmtCount = ms => { const t = Math.max(0, Math.ceil(ms / 1000)); if (t >= 86400) return `${Math.floor(t / 86400)}d ${Math.floor(t % 86400 / 3600)}h`; if (t >= 3600) return `${Math.floor(t / 3600)}h ${Math.floor(t % 3600 / 60)}m`; return `${Math.floor(t / 60)}:${pad(t % 60)}`; };
+    const crawlerOf = id => s.crawlers.find(x => x.id === id);
+    const runTotal = r => { const x = r && crawlerOf(r.crawler); return x ? Math.max(1, x.follow.on ? x.follow.max : x.urls.length) : 1; };
+    const runPct = r => !r ? 0 : r.status === 'running' ? Math.min(95, Math.round(r.pages / runTotal(r) * 100)) : 100;
+    const nextEntries = Object.entries(s.nextAt || {}).filter(([n]) => crawlerOf(n)).sort((x, y) => x[1] - y[1]);
+    const upcoming = nextEntries[0];
+    const upC = upcoming ? crawlerOf(upcoming[0]) : null;
+    const liveList = Object.values(s.live).filter(r => r.status === 'running');
+    const liveR = liveList.find(r => r.crawler === c.id) || liveList[0];
+    const liveC = liveR ? crawlerOf(liveR.crawler) : null;
+    const showHints = (this.props.guidance ?? 'Beginner') === 'Beginner';
+    const issues = k.list.filter(x => !x.ok).length;
+    const run = s.live[c.id] || null;
+    const showNameErr = (s.touched.name || s.attempted) && !k.nameOk;
+    const myRuns = s.runs.filter(r => r.crawler === c.id);
+    const detail = s.openRun ? myRuns.find(r => r.id === s.openRun) : null;
+    const dirty = !!s.dirty[c.id];
+    const [fT, fK] = this.sw(c.follow.on), [rT, rK] = this.sw(c.robots), [sT, sK] = this.sw(c.schedule.on);
+    const sc = c.schedule;
+    const dayNames = {Mon:'Monday',Tue:'Tuesday',Wed:'Wednesday',Thu:'Thursday',Fri:'Friday',Sat:'Saturday',Sun:'Sunday'};
+    const scheduleSummary = !sc.on ? 'Off — runs only when you press Run.' : sc.freq === 'hourly' ? 'Runs every hour.' : sc.freq === 'daily' ? `Runs every day at ${sc.time}.` : sc.freq === 'weekly' ? `Runs every ${dayNames[sc.day]} at ${sc.time}.` : `Runs every ${sc.raw.every}${sc.raw.at ? ' at ' + sc.raw.at : ''}.`;
+    const testable = k.urlsOk && k.extractOk;
+    const td = s.testData;
+    const cols = detail ? this.colsOf(detail.id) : [];
+    const statusColor = st => st === 'completed' ? ACC : st === 'stopped' ? '#FBBF24' : st === 'failed' ? '#F87171' : '#7DD3FC';
+    const tagColor = {INFO:'#7A818C', GET:'#7DD3FC', OK:ACC, DONE:ACC, STOP:'#F87171', WARN:'#FBBF24', ERR:'#F87171'};
+    const latestOf = id => s.runs.find(r => r.crawler === id);
+    const schedOf = x => x.schedule;
+    const toggleLabel = sc.on && sc.freq === 'custom';
+
+    return {
+      c, showHints, showSideMeta: this.props.sidebarDetail ?? true,
+      globalRunning: !!liveC, globalRunText: liveC ? `Running ${liveC.name} · ${runPct(liveR)}%` : '', globalRunPct: `${runPct(liveR)}%`,
+      goLive: () => { if (liveC) this.setState({sel:liveC.id, tab:'runs', openRun:null}); },
+      queueText: liveList.length > 1 ? `+${liveList.length - 1} more` : false,
+      schedOn: s.schedOn, schedOff: !s.schedOn,
+      schedText: !s.schedOn ? 'Scheduler paused' : upC ? `Next: ${upC.name} in ${fmtCount(upcoming[1] - nowT)}` : 'Scheduler on · nothing scheduled',
+      toggleScheduler: () => this.toggleScheduler(),
+      schedToggleTitle: s.schedOn ? 'Pause all scheduled runs' : 'Resume scheduled runs',
+      openHelp: () => this.setState({help:true}), closeHelp: () => this.setState({help:false}),
+      openHelpSel: e => { e.preventDefault(); this.setState({help:true}); },
+      helpOpen: s.help, toast: s.toast,
+      newCrawler: () => this.newCrawler(),
+      sideItems: s.crawlers.map(x => {
+        const l = s.live[x.id];
+        const running = !!l && l.status === 'running';
+        const active = x.id === c.id, hover = s.hoverId === x.id, xs = schedOf(x);
+        const latest = latestOf(x.id);
+        return { name: x.name || 'Untitled crawler', onClick: () => this.select(x.id),
+          bg: active ? '#181B20' : hover ? '#14171B' : 'transparent',
+          onEnter: () => this.setState({hoverId:x.id}), onLeave: () => this.setState(st => st.hoverId === x.id ? {hoverId:null} : null),
+          onDelete: e => { e.stopPropagation(); this.setState({confirm:x.id, keepData:true}); },
+          delOpacity: hover ? 1 : 0,
+          isAi: x.mode === 'ai', isCss: x.mode !== 'ai', iconFg: active ? ACC : '#9AA1AC',
+          anim: running ? 'cs-pulse 1.4s infinite' : 'none',
+          running, pct: running ? `${runPct(l)}%` : '0%', queued: false,
+          scheduled: xs.on && !running && x.saved, schedShort: s.nextAt[x.id] ? `in ${fmtCount(s.nextAt[x.id] - nowT)}` : xs.freq === 'hourly' ? '1h' : xs.freq === 'daily' ? xs.time : xs.freq === 'weekly' ? xs.day : xs.raw.every,
+          schedTitle: xs.freq === 'hourly' ? 'Runs every hour' : xs.freq === 'daily' ? `Runs daily at ${xs.time}` : xs.freq === 'weekly' ? `Runs every ${xs.day} at ${xs.time}` : `Runs every ${xs.raw.every}`,
+          dot: running ? ACC : latest ? '#5E8A2E' : '#3A3F47',
+          sub: running ? `Page ${Math.max(1, l.pages)} of ${runTotal(l)} · ${l.items} items` : latest ? `${latest.items} new items · ${shortWhen(latest.startedAt)}` : x.saved ? 'Never run' : 'Not saved yet' };
+      }),
+      title: c.name || 'Untitled crawler', isDirty: dirty, isClean: !dirty,
+      deleteName: (() => { const t = crawlerOf(s.confirm) || c; return t.name || 'Untitled crawler'; })(),
+      cancelDelete: () => this.setState({confirm:false}),
+      confirmDelete: () => this.deleteCur(),
+      confirmOpen: !!s.confirm, keepData: s.keepData !== false,
+      toggleKeepData: () => this.setState(st => ({keepData: st.keepData === false})),
+      deleteDetail: (() => { const t = crawlerOf(s.confirm) || c; const n = s.runs.filter(r => r.crawler === t.id).length;
+        return `This removes its template${t.saved && n && s.keepData === false ? ` and ${n} run${n > 1 ? 's' : ''} from history` : ''}${t.schedule.on ? ', and cancels its schedule' : ''}.`; })(),
+      undoOpen: !!s.undo, undoName: s.undo ? (s.undo.crawler.name || 'Untitled crawler') : '',
+      undoDelete: () => this.undoDelete(),
+      save: () => this.save(),
+      startRun: () => this.startRun(),
+      runLabel: run && run.status === 'running' ? 'Running…' : 'Run', hasIssues: issues > 0, issueCount: issues,
+      tabs: [['configure','Configure'],['runs','Runs'],['yaml','YAML']].map(([id, l]) => ({
+        label:l, onClick:() => this.setState({tab:id, openRun:null}), isCfg:id === 'configure', isRuns:id === 'runs', isYaml:id === 'yaml', fg: s.tab === id ? '#E8EAED' : '#9AA1AC',
+        shadow: s.tab === id ? `inset 0 -2px 0 ${ACC}` : 'none',
+        count: id === 'runs' && myRuns.length ? myRuns.length : false, live: id === 'runs' && run && run.status === 'running'
+      })),
+      onConfigure: s.tab === 'configure', onRuns: s.tab === 'runs', onYaml: s.tab === 'yaml',
+
+      s1done: k.nameOk && k.urlsOk, s1todo: !(k.nameOk && k.urlsOk), s2done: k.extractOk, s2todo: !k.extractOk,
+      onName: e => this.upd({name: e.target.value.toLowerCase().replace(/\s+/g, '-')}),
+      nameLocked: c.saved,
+      touchName: () => this.setState(st => ({touched:{...st.touched, name:true}})),
+      nameBorder: showNameErr ? '#7F3434' : '#2A2F37',
+      nameErr: showNameErr ? (c.name ? 'Only lowercase letters, numbers and dashes, please.' : 'Your crawler needs a name.') : false,
+      nameHint: !showNameErr && showHints,
+      hasUrls: c.urls.length > 0,
+      urlRows: c.urls.map(u => ({url:u, remove:() => this.upd(x => ({urls:x.urls.filter(v => v !== u)}))})),
+      urlDraft: s.urlDraft, onUrlDraft: e => this.setState({urlDraft:e.target.value, urlErr:''}),
+      onUrlKey: e => { if (e.key === 'Enter') { e.preventDefault(); this.addUrl(); } },
+      addUrl: () => this.addUrl(),
+      urlErr: s.urlErr || ((s.attempted && !k.urlsOk) ? 'Add at least one start page.' : false),
+      urlBorder: s.urlErr || (s.attempted && !k.urlsOk) ? '#7F3434' : '#2A2F37',
+      urlHint: !s.urlErr && !(s.attempted && !k.urlsOk) && showHints,
+      domains: [...new Set(c.urls.map(host).filter(Boolean))], hasDomains: c.urls.length > 0,
+
+      modeOpts: [['css','Pick with CSS','Precise and free. You point at elements.'],['ai','Describe it, AI extracts','Write it in plain words. Needs an API key.']].map(([v, t, d]) => {
+        const on = c.mode === v;
+        return {title:t, desc:d, onClick:() => this.upd({mode:v}), border:on ? ACC : '#2A2F37', bg:on ? 'rgba(185,243,90,0.05)' : '#0E1013', ring:on ? ACC : '#4A515C', fill:on ? ACC : 'transparent'};
+      }),
+      isCss: c.mode === 'css', isAi: c.mode === 'ai',
+      onItem: e => this.upd({item:e.target.value}),
+      fieldRows: c.fields.map((f, i) => {
+        const set = p => this.upd(x => ({fields:x.fields.map((g, j) => j === i ? {...g, ...p} : g)}));
+        return {...f, isAttr: f.get === 'attr',
+          onName: e => set({name:e.target.value.replace(/\s+/g, '_')}), onSel: e => set({selector:e.target.value}),
+          onGet: e => set({get:e.target.value}), onAttr: e => set({attr:e.target.value}),
+          remove: () => this.upd(x => ({fields: x.fields.length > 1 ? x.fields.filter((_, j) => j !== i) : [blankField()]}))};
+      }),
+      addField: () => this.upd(x => ({fields:[...x.fields, blankField()]})),
+      fieldsErr: s.attempted && c.mode === 'css' && !k.extractOk,
+      onDesc: e => this.upd({description:e.target.value}),
+      descBorder: s.attempted && !k.extractOk ? '#7F3434' : '#2A2F37', descErr: s.attempted && c.mode === 'ai' && !k.extractOk,
+      descExamples: ["Each product's name, price and rating", 'Article headline, author and date', 'Job title, company and location'].map(l => ({label:l, onClick:() => this.upd({description:l})})),
+
+      toggleFollow: () => this.upd(x => ({follow:{...x.follow, on:!x.follow.on}})), followTrack:fT, followKnob:fK,
+      onNext: e => this.upd(x => ({follow:{...x.follow, next:e.target.value}})),
+      maxDec: () => this.upd(x => ({follow:{...x.follow, max:Math.max(1, x.follow.max - 1)}})),
+      maxInc: () => this.upd(x => ({follow:{...x.follow, max:Math.min(500, x.follow.max + 1)}})),
+
+      stealthOpts: STEALTH.map(o => { const on = c.stealth === o.id; return {...o, onClick:() => this.upd({stealth:o.id}), border:on ? ACC : '#2A2F37', bg:on ? 'rgba(185,243,90,0.05)' : '#0E1013'}; }),
+      speedOpts: this.seg([['gentle','Gentle'],['normal','Normal'],['fast','Fast']], c.speed, v => this.upd({speed:v, rps:SPEEDS[v].rps, workers:SPEEDS[v].workers})),
+      speedSummary: `${c.rps} request${c.rps === 1 ? '' : 's'}/sec per site · ${c.workers} pages at once${c.speed === 'custom' ? ' (custom)' : ''}`,
+      showCustom: s.custom, toggleCustom: e => { e.preventDefault(); this.setState(st => ({custom:!st.custom})); },
+      customLabel: s.custom ? 'Hide' : 'Fine-tune',
+      onRps: e => this.upd({rps:parseFloat(e.target.value) || 0.1, speed:'custom'}),
+      onWorkers: e => this.upd({workers:parseInt(e.target.value) || 1, speed:'custom'}),
+      toggleRobots: () => this.upd(x => ({robots:!x.robots})), robotsTrack:rT, robotsKnob:rK,
+      captchaOpts: this.seg([['skip','Skip that page'],['stop','Stop the run'],['manual','Let me solve it']], c.captcha, v => this.upd({captcha:v})),
+
+      toggleSchedule: () => this.upd(x => ({schedule:{...x.schedule, on:!x.schedule.on}})), schedTrack:sT, schedKnob:sK,
+      freqOpts: this.seg([['hourly','Hourly'],['daily','Daily'],['weekly','Weekly']], sc.freq, v => this.upd(x => ({schedule:{...x.schedule, freq:v}}))),
+      isWeekly: sc.freq === 'weekly', hasTime: sc.freq === 'daily' || sc.freq === 'weekly',
+      onDay: e => this.upd(x => ({schedule:{...x.schedule, day:e.target.value}})),
+      onTime: e => this.upd(x => ({schedule:{...x.schedule, time:e.target.value}})),
+      scheduleSummary,
+      schedNotReady: sc.on && !k.list.every(x => x.ok),
+      schedPaused: sc.on && k.list.every(x => x.ok) && !s.schedOn,
+      hasNext: !!s.nextAt[c.id],
+      nextText: s.nextAt[c.id] ? `Next run in ${fmtCount(s.nextAt[c.id] - nowT)}` : '',
+      nextPct: s.nextAt[c.id] ? `${Math.min(100, Math.max(0, 100 - (s.nextAt[c.id] - nowT) / this.everyMs(c) * 100))}%` : '0%',
+      fastNote: c.saved && dirty && sc.on ? 'Save to apply this schedule.' : '',
+      resumeScheduler: () => this.toggleScheduler(),
+      runNowSched: () => this.startRun(),
+
+      checks: k.list.map(x => ({...x, notOk:!x.ok, fg:x.ok ? '#C9CDD3' : '#E8EAED', ring:(s.attempted && !x.ok) ? '#F87171' : '#4A515C'})),
+      readyText: issues ? `${issues} left` : 'All set', readyColor: issues ? '#9AA1AC' : ACC,
+      plan: [
+        {k:'Pages', v: c.follow.on ? `Up to ${c.follow.max}` : 'Start pages only'},
+        {k:'Stealth', v: STEALTH.find(o => o.id === c.stealth).title},
+        {k:'Speed', v: `${c.rps}/s · ${c.workers} parallel`},
+        {k:'Schedule', v: !sc.on ? 'Manual' : sc.freq === 'hourly' ? 'Hourly' : sc.freq === 'daily' ? `Daily ${sc.time}` : sc.freq === 'weekly' ? `${sc.day} ${sc.time}` : sc.raw.every},
+      ],
+      runTest: () => this.runTest(),
+      testLoading: s.test === 'loading', testDone: s.test === 'done' && !!td, testBlocked: s.test === 'blocked', testMsg: s.testMsg,
+      testLabel: s.test === 'loading' ? 'Fetching page…' : s.test === 'done' ? 'Test again' : 'Run test',
+      testBtnFg: testable ? '#E8EAED' : '#9AA1AC',
+      testCountText: td ? (td.count ? `Found ${td.count} item${td.count === 1 ? '' : 's'} on the first page${td.count > 3 ? ' · first 3 below' : ''}` : 'No items found — check your selectors.') : '',
+      testRecords: td ? td.records.map(rec => ({cells:Object.entries(rec).filter(([key]) => key !== '_url').map(([key, v]) => ({k:key, v:cellVal(v)}))})) : [],
+
+      run: run ? {...run, errors:run.errors || 0} : {pages:0, items:0, errors:0}, hasLive: !!run && !detail, liveRunning: !!run && run.status === 'running',
+      liveFinished: !!run && run.status !== 'running' && !!run.runId,
+      liveDot: run ? React.createElement('span', {style:{width:10, height:10, borderRadius:'50%', flex:'none',
+        background: statusColor(run.status),
+        animation: run.status === 'running' ? 'cs-pulse 1.4s infinite' : 'none'}}) : null,
+      liveTitle: !run ? '' : run.status === 'running' ? (run.stopping ? 'Stopping…' : run.trigger === 'schedule' ? 'Scheduled run · crawling…' : 'Crawling…') : run.status === 'completed' ? 'Run finished' : run.status === 'failed' ? 'Run failed' : 'Run stopped',
+      liveStarted: run ? run.startedLabel : '', liveElapsed: run ? (run.status === 'running' ? fmtElapsed(nowT - run.start) : `took ${fmtElapsed((run.end || nowT) - run.start)}`) : '',
+      progressPct: `${runPct(run)}%`,
+      logLines: run ? run.lines.map(l => ({...l, color:tagColor[l.t] || '#9AA1AC'})) : [],
+      stopRun: () => this.stopRun(),
+      viewLiveResults: () => this.openRun(run.runId),
+      logRef: this.logRef,
+      showRunList: !detail, noRuns: myRuns.length === 0 && !run, isQueued: false, livePages: run ? (run.status === 'running' ? `${run.pages} / ${runTotal(run)}` : `${run.pages}`) : '0', hasRuns: myRuns.length > 0,
+      runRows: myRuns.map(r => ({...r, isSched:r.trigger === 'schedule', isManual:r.trigger !== 'schedule', color:statusColor(r.status), statusLabel:{completed:'Completed', stopped:'Stopped', failed:'Failed'}[r.status] || r.status, onClick:() => this.openRun(r.id)})),
+      hasDetail: !!detail, detail: detail || {}, closeRun: () => this.setState({openRun:null, inspect:null}),
+      ...this.resultVals(c, detail, cols, statusColor),
+
+      yaml: this.yaml(c), fileName: c.name || 'untitled',
+      copyLabel: s.copied ? 'Copied' : 'Copy',
+      copyYaml: () => { try { navigator.clipboard.writeText(this.yaml(c)); } catch(e) {} this.setState({copied:true}); setTimeout(() => this.setState({copied:false}), 1500); },
+    };
+  }
+}
+</script>
+
+
+</body></html>
