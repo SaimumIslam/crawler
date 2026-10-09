@@ -20,4 +20,5 @@ data/
 .DS_Store
 .idea/
 
-docs
+docs/*
+!docs/screenshots/
